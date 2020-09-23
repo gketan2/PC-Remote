@@ -14,4 +14,13 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+
+    @Test
+    fun stringManipulation(){
+        var a = "25"
+        for(i in a.length until 10){
+            a += "k"
+        }
+        assertEquals("25kkkkkkkk", a)
+    }
 }

@@ -1,27 +1,20 @@
 package com.k10.control.network
 
-class Repository {
+import androidx.lifecycle.MediatorLiveData
+import com.k10.control.helper.Headers
+import org.json.JSONObject
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class Repository @Inject constructor(private val sockets: Sockets) {
 
     /**TODO
      * Make a List of possible commands.
      * Also make function that accepts custom commands
      */
 
-    companion object {
-        private var repository: Repository? = null
-
-        /**
-         * Returns instance of this class
-         *
-         * Following Singleton pattern
-         */
-        fun getInstance(): Repository {
-            if (repository == null) {
-                repository = Repository()
-            }
-            return repository!!
-        }
-    }
+    val socketStatus: MediatorLiveData<SocketStatus> = MediatorLiveData()
 
     /**
      * Send current position(x, y) to the server.
@@ -31,8 +24,7 @@ class Repository {
      * If aspect-ratio is set then server converts the given point according to its screen size.
      * So it is recommended to set aspect-ratio.
      */
-    fun sendPointerPosition(x: Int, y: Int) {
-
+    suspend fun sendPointerPosition(x: Int, y: Int) {
     }
 
     /**
@@ -40,8 +32,7 @@ class Repository {
      *
      * This will help in moving the pointer for different screen sizes with same speed.
      */
-    fun sendScreenSize(screenWidth: Int, screenHeight: Int) {
-
+    suspend fun sendScreenSize(screenWidth: Int, screenHeight: Int) {
     }
 
     /**
@@ -49,15 +40,15 @@ class Repository {
      *
      * Call it when application is closing otherwise the connection will be open forever
      */
-    fun closeConnection() {
-
+    suspend fun closeConnection() {
+        sockets.closeSocket()
     }
 
     /**
-     * Start the connection to given ip and port
+     * Start the connection with given ip and port
      */
-    fun startConnection(ipAddress: String, port: Int) {
-
+    suspend fun startConnection(ipAddress: String, port: Int) {
+        socketStatus.postValue(sockets.createSocket(ipAddress, port))
     }
 
     /**
@@ -67,8 +58,16 @@ class Repository {
      *
      * If called after the auth done, with wrong password, no command will run until you set correct password again.
      */
-    fun sendPassword(password: String) {
+    suspend fun sendPassword(password: String) {
+        val jsonObject = JSONObject()
+        jsonObject.put(COMMANDS.COMMAND, COMMANDS.COMMAND_PASSWORD)
+        jsonObject.put(COMMANDS.PASSWORD, password)
 
+        val data = Headers.addHeader(jsonObject.toString())
+
+        println("-------------------"+data)
+
+        sockets.sendStringData(data)
     }
 
     /**
@@ -79,7 +78,7 @@ class Repository {
      * Note: Data should only be in json format,
      * otherwise it will not work(will be discarded on server side)
      */
-    fun sendCustomCommand(command: Int, data: String) {
+    suspend fun sendCustomCommand(command: Int, data: String) {
 
     }
 }

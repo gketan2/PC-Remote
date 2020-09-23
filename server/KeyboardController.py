@@ -57,37 +57,56 @@ class KeyboardController:
 			42: 'f12'
 		}
 
-	#parameter: single KeyCode
-	def pressKey(self, value):
-		if len(alue) != 1:
-			return
-		#ascii = ord(alphabet)  #ascii code
-		#if ascii >= 65 and ascii <= 90:
-		gui.press(value)
+# list = [
+# 	(1, 4),#ctrlleft
+# 	(0, 't')#t
+# ]
+
+	#parameter: single value (not code)
+	#receives list(size=1) ex. [(1,4)] or [(0,'t')]
+	#
+	def pressKeys(self, keys):
+		for key in keys:
+			try:
+				if key["type"] == 1: # if is a special key
+					if key["value"] in self.SpecialKeyCodes:
+						gui.press(self.SpecialKeyCodes[key["value"]])
+				else:
+					temp = key["value"]
+					if len(temp) == 1:
+						gui.press(temp)
+			except:
+				pass
 
 	#write the given string
+	#parameter: string, type = string
 	def pressString(self, string):
 		gui.write(string)
 
-	#parameter: dictionary of KeyCode    keytype: Code   ex- special:28 or normal: 5
-	# 0 -> normal, 1 -> special
-	def pressHotKeys(self, dictionary):
-		# make a stack
+	#parameter: list of JSON ex. [{"type":1, "value":5},{"type":0, value: "n"},...]
+	# type  -> if special or normal  1-> special, 0-> normal
+	# value -> ehat to press
+	def pressHotKeys(self, keys):
+		#make a stack
 		stack = Stack()
 		temp = 0
-		for key  in dictionary:
-			if key == 1: # if it is special
-				if dictionary[key] in self.SpecialKeyCodes:
-					temp = self.SpecialKeyCodes[dictionary[key]]
-					stack.put(temp)
-					gui.keyDown(temp)
-					#print(temp)
-			else:
-				temp = dictionary[key]
-				if len(temp) == 1:
-					stack.put(temp)
-					gui.keyDown(temp)
-					#print(temp)
+
+		for key in keys:
+			try:
+				if key["type"] == 1: # if is special type
+					if key["value"] in self.SpecialKeyCodes:
+						temp = self.SpecialKeyCodes[key["value"]]
+						gui.keyDown(temp)
+						stack.put(temp)
+						#print(temp)
+				else:
+					temp = key["value"]
+					if len(temp) == 1:
+						gui.keyDown(temp)
+						stack.put(temp)
+						#print(temp)
+			except:
+				pass
 
 		#empty the stack
 		#unpress the key in the opposite order they were pressed
@@ -95,16 +114,6 @@ class KeyboardController:
 			temp = stack.get()
 			gui.keyUp(temp)
 			#print(temp)
-
-	#parameter: keyCode
-	def pressSpecialKey(self, code):
-		if code in self.SpecialKeyCodes:
-			gui.press(self.SpecialKeyCodes[code])
-
-#1. gui.keyDown(codeValue) -> gui.keyUp(same-codeValue)
-#2. gui.press(code) (codeValue or alphabet)
-#3. gui.write(string/listOfCodeValues)
-#4. gui.hotkey(vararg of string/codeValue)    can use in place of 1
 
 #testing
 #keyboard = KeyboardController.getInstance()
