@@ -12,55 +12,50 @@ class KeyboardController:
 
 	def __init__(self):
 		self.SpecialKeyCodes = {
-			0: 'esc',
-			1: 'enter',
-			2: 'shiftleft',
-			3: 'shiftright',
-			4: 'ctrlleft',
-			5: 'ctrlright',
-			6: 'tab',
-			7: 'backspace',
-			8: 'delete',
-			9: 'pageup',
-			10: 'pagedown',
-			11: 'home',
-			12: 'end',
-			13: 'up',
-			14: 'down',
-			15: 'left',
-			16: 'right',
-			17: 'volumemute',
-			18: 'volumeup',
-			19: 'volumedown',
-			20: 'pause',
-			21: 'capslock',
-			22: 'numlock',
-			23: 'scrolllock',
-			24: 'insert',
-			25: 'printscreen',
-			26: 'winleft',
-			27: 'winright',
-			28: 'command',#macos
-			29: 'option',#macos
-			30: 'leaving for number match for f1, f2',
-			31: 'f1',
-			32: 'f2',
-			33: 'f3',
-			34: 'f4',
-			35: 'f5',
-			36: 'f6',
-			37: 'f7',
-			38: 'f8',
-			39: 'f9',
-			40: 'f10',
-			41: 'f11',
-			42: 'f12'
+			'0': 'esc',
+			'1': 'enter',
+			'2': 'shiftleft',
+			'3': 'shiftright',
+			'4': 'ctrlleft',
+			'5': 'ctrlright',
+			'6': 'tab',
+			'7': 'backspace',
+			'8': 'delete',
+			'9': 'pageup',
+			'10': 'pagedown',
+			'11': 'home',
+			'12': 'end',
+			'13': 'up',
+			'14': 'down',
+			'15': 'left',
+			'16': 'right',
+			'17': 'volumemute',
+			'18': 'volumeup',
+			'19': 'volumedown',
+			'20': 'pause',
+			'21': 'capslock',
+			'22': 'numlock',
+			'23': 'scrolllock',
+			'24': 'insert',
+			'25': 'printscreen',
+			'26': 'winleft',
+			'27': 'winright',
+			'28': 'command',#macos
+			'29': 'option',#macos
+			'30': 'leaving for number match for f1, f2',
+			'31': 'f1',
+			'32': 'f2',
+			'33': 'f3',
+			'34': 'f4',
+			'35': 'f5',
+			'36': 'f6',
+			'37': 'f7',
+			'38': 'f8',
+			'39': 'f9',
+			'40': 'f10',
+			'41': 'f11',
+			'42': 'f12'
 		}
-
-# list = [
-# 	(1, 4),#ctrlleft
-# 	(0, 't')#t
-# ]
 
 	#parameter: single value (not code)
 	#receives list(size=1) ex. [(1,4)] or [(0,'t')]
@@ -98,13 +93,11 @@ class KeyboardController:
 						temp = self.SpecialKeyCodes[key["value"]]
 						gui.keyDown(temp)
 						stack.put(temp)
-						#print(temp)
 				else:
 					temp = key["value"]
 					if len(temp) == 1:
 						gui.keyDown(temp)
 						stack.put(temp)
-						#print(temp)
 			except:
 				pass
 
@@ -113,13 +106,3 @@ class KeyboardController:
 		while not stack.empty():
 			temp = stack.get()
 			gui.keyUp(temp)
-			#print(temp)
-
-#testing
-#keyboard = KeyboardController.getInstance()
-#keyboard.pressKey('#')
-#list = {
-#	1: 26,
-#	0: '3'
-#}
-#keyboard.pressHotKeys(list)

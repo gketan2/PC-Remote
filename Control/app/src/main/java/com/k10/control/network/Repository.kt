@@ -2,12 +2,14 @@ package com.k10.control.network
 
 import androidx.lifecycle.MediatorLiveData
 import com.k10.control.helper.Headers
+import com.k10.control.request.Request
+import com.k10.control.request.Services
 import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Repository @Inject constructor(private val sockets: Sockets) {
+class Repository @Inject constructor(private val sockets: Sockets, private val request: Request) {
 
     /**TODO
      * Make a List of possible commands.
@@ -15,6 +17,8 @@ class Repository @Inject constructor(private val sockets: Sockets) {
      */
 
     val socketStatus: MediatorLiveData<SocketStatus> = MediatorLiveData()
+
+    fun getSocketStatusLiveData() = sockets.currentState
 
     /**
      * Send current position(x, y) to the server.
@@ -48,7 +52,7 @@ class Repository @Inject constructor(private val sockets: Sockets) {
      * Start the connection with given ip and port
      */
     suspend fun startConnection(ipAddress: String, port: Int) {
-        socketStatus.postValue(sockets.createSocket(ipAddress, port))
+        sockets.createSocket(ipAddress, port)
     }
 
     /**
@@ -59,15 +63,25 @@ class Repository @Inject constructor(private val sockets: Sockets) {
      * If called after the auth done, with wrong password, no command will run until you set correct password again.
      */
     suspend fun sendPassword(password: String) {
-        val jsonObject = JSONObject()
-        jsonObject.put(COMMANDS.COMMAND, COMMANDS.COMMAND_PASSWORD)
-        jsonObject.put(COMMANDS.PASSWORD, password)
 
-        val data = Headers.addHeader(jsonObject.toString())
+        val data = "password=$password"
 
-        println("-------------------"+data)
+
 
         sockets.sendStringData(data)
+    }
+
+    /**
+     * input: String - to be written(buttons to be pressed)
+     *
+     * Given string will be typed out on the pc,
+     * it is not necessary that it will write it in the text box,
+     * it just simulate the button press if the view(in PC)
+     * is not in focus string will not be typed.
+     * */
+    suspend fun typeString(data: String) {
+        val jsonObject: JSONObject = request.generateRequestJSON(Services.SERVICE_KEYBOARD, Services.SERVICE_KEYBOARD_TYPE, data)
+        sockets.sendStringData(jsonObject.toString())
     }
 
     /**
@@ -77,8 +91,9 @@ class Repository @Inject constructor(private val sockets: Sockets) {
      *
      * Note: Data should only be in json format,
      * otherwise it will not work(will be discarded on server side)
-     */
+
     suspend fun sendCustomCommand(command: Int, data: String) {
 
     }
+     */
 }

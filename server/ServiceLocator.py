@@ -25,45 +25,77 @@ class ServiceLocator:
 		try:
 			jsonData = self.stringToJson(data)
 		except:
-			print("Bad request: json Format not found")
+			print("---Bad request: json Format not found")
 			return False
 
 		if "service" in jsonData:
 			service = jsonData["service"]
 		else:
-			print("Bad request: No \"service\" Found.")
+			print("---Bad request: No \"service\" Found.")
+			return False
+
+		if "sub_service" in jsonData:
+			subService = jsonData["sub_service"]
+		else:
+			print("---Bad request: No \"type\" found")
 			return False
 
 		if service == 0:
-			print("password service")
+			print("+password service")
 			# password related service
-			return True
-		elif service == 1:
-			print("keyboard service")
-			# keyboard related service
-			if "type" in jsonData:
-				if jsonData["type"] == 0: #type word
-					if "value" in jsonData:
-						self.keyboard.pressString(str(jsonData["value"]))
-						return True
-					return False
-				elif jsonData["type"] == 1: #press list
-					if "key_list" in jsonData:
-						self.keyboard.pressKeys(jsonData["key_list"])
-						return True
-					return False
-				elif jsonData["type"] == 2: #press hotkeys
-					if "key_list" in jsonData:
-						self.keyboard.pressHotKeys(jsonData["key_list"])
-					return True
-
 			return False
+		elif service == 1:
+			print("+keyboard service")
+			# keyboard related service
+			if subService == 0: #type word
+				if "value" in jsonData:
+					self.keyboard.pressString(str(jsonData["value"]))
+					print("+++Type the string")
+					return True
+				return False
+			elif subService == 1: #press list
+				if "key_list" in jsonData:
+					self.keyboard.pressKeys(jsonData["key_list"])
+					print("+++press keys")
+					return True
+				return False
+			elif subService == 2: #press hotkeys
+				if "key_list" in jsonData:
+					self.keyboard.pressHotKeys(jsonData["key_list"])
+					print("+++press HOTKeys")
+					return True
+				return False
+
+			print("---Bad request: No corresponding type")
+			return False
+
 		elif service == 2:
-			print("Mouse service")
+			print("+Mouse service")
 			# mouse related service
-			return True
+			if subService == 0:
+				self.mouse.performClick()
+				print("+++Single Click")
+				return True
+			elif subService == 1:
+				self.mouse.performDoubleClick()
+				print("+++Double Click")
+				return True
+			elif subService == 2:
+				self.mouse.performRightClick()
+				print("+++Right Click")
+				return True
+			elif subService == 3:
+				return False
+			elif subService == 4:
+				return False
+			elif subService == 5:
+				return False
+
+			print("---Bad reques: No corresponding type")
+			return False
+
 		else:
-			print("Bad request: No corresponding service present")
+			print("---Bad request: No corresponding service present")
 			return False
 
 		return False
@@ -71,8 +103,8 @@ class ServiceLocator:
 Format:
 	KEYBOARD:
 		{
-			1."service":"1",
-			2."type":"0"    #0-write string, 1-list of keySet, 2-hotKeys list
+			1."service":1,
+			2."sub_service":0      #0-write string, 1-list of keySet, 2-hotKeys list
 			3."key_list":
 					[
 					{"type":1, "value":4},
@@ -82,6 +114,17 @@ Format:
 			  "value":"abcd" #string
 		}
 	MOUSE:
+		sub_service:
+			0-click
+			1-doubleclick
+			2-rightclick
+			3-moveTo
+			4-moveBy
+
+			1."service":2,
+			2."sub_service": 3(from above),
+			3."value": (FOR TYPE 3, 4 ONLY) {"x":+-34, "y":+-45}
+
 		{
 
 		}

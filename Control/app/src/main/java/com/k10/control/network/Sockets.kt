@@ -1,5 +1,7 @@
 package com.k10.control.network
 
+import androidx.lifecycle.MediatorLiveData
+import com.k10.control.helper.Headers
 import java.io.IOException
 import java.io.OutputStream
 import java.lang.IllegalArgumentException
@@ -15,63 +17,94 @@ class Sockets @Inject constructor() {
     }
 
     private var socket: Socket? = null
-    private var sender: OutputStream? = null
+    private var writerStream: OutputStream? = null
 
     private var isInitial = true
+
+    val currentState: MediatorLiveData<SocketStatus> = MediatorLiveData()
 
     suspend fun createSocket(
         ipAddress: String = DEFAULT_IP,
         port: Int = DEFAULT_PORT
-    ): SocketStatus {
-        if (!isInitial)
-            socket?.close()
+    ) {
+        try {
+            if (isInitial) {
+                socket = null
+            } else {
+                socket?.close()
+                socket = null
+            }
+        } catch (e: Exception) {
+            socket = null
+        }
 
         try {
             socket = Socket(ipAddress, port)
+            isInitial = false
+            currentState.postValue(SocketStatus(true, "Connected"))
         } catch (e: UnknownHostException) {
-            return SocketStatus(false, "Server not found")
+            isInitial = true
+            currentState.postValue(SocketStatus(false, "Server not found"))
+            return
         } catch (e: IOException) {
-            println(e.message)
-            return SocketStatus(false, "Something Went Wrong")
+            isInitial = true
+            currentState.postValue(SocketStatus(false, "Something Went Wrong"))
+            return
         } catch (e: SecurityException) {
-            return SocketStatus(false, "Network not secure")
+            isInitial = true
+            currentState.postValue(SocketStatus(false, "Network not secure"))
+            return
         } catch (e: IllegalArgumentException) {
-            return SocketStatus(false, "Illegal Argument")
+            isInitial = true
+            currentState.postValue(SocketStatus(false, "Illegal Argument"))
+            return
         }
 
         socket?.let {
             if (it.isConnected) {
-                sender = it.getOutputStream()
+                writerStream = it.getOutputStream()
                 isInitial = false
-                println("socket connected")
-                return SocketStatus(true, "Success")
+                return
             }
         }
 
-        socket?.close()
+        try {
+            socket?.close()
+        } catch (e: Exception) {
+        }
         socket = null
         isInitial = true
-        return SocketStatus(false, "Something went")
+        currentState.postValue(SocketStatus(false, "Socket Disconnected"))
     }
 
+    /**
+     * input: String - data to be sent
+     *
+     * Add the HEADER to the input string and then send it to the connected socket server.
+     */
     suspend fun sendStringData(data: String) {
         socket?.let {
             println("-------not null socket")
-            if (it.isConnected) {
-                println("----------is connected")
-                sender?.write(data.toByteArray(charset = Charsets.UTF_8))
+            //adding Header to the data
+            val message = Headers.addHeader(data)
+            try {
+                writerStream?.write(message.toByteArray(charset = Charsets.UTF_8))
+            } catch (e: Exception) {
+                currentState.postValue(SocketStatus(false, e.localizedMessage!!))
+                closeSocket()
             }
         }
     }
 
-    suspend fun closeSocket(): Boolean {
-        socket?.let {
-            it.close()
-            sender = null
-            isInitial = false
-            return true
+    suspend fun closeSocket() {
+        try {
+            socket?.close()
+        } catch (e: Exception) {
         }
-        isInitial = false
-        return false
+        socket = null
+        writerStream = null
+        socket = null
+        isInitial = true
+        currentState.postValue(SocketStatus(false, "Socket Disconnected"))
     }
 }

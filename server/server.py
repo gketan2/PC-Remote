@@ -37,6 +37,8 @@ if __name__ == "__main__":
 	#(any later connection are stored in queue)
 	s.listen(0)
 
+	isAuthenticated = False
+
 	try:
 
 		while True:
@@ -46,29 +48,45 @@ if __name__ == "__main__":
 
 			fullMessage = ""
 			isNewMessage = True
+			lengthToReceive = 10
 
 			while True:
-				currentMessage = clientsocket.recv(16) # receive 16 bytes at a time
+				currentMessage = clientsocket.recv(lengthToReceive)
 				#To CLOSE the connection, Empty-String is sent
 				if len(currentMessage) == 0:
+					isAuthenticated = False
+					print(f'closed from {address}')
 					break
 
 				if isNewMessage:
-					#print(f"new message length: {currentMessage[:HEADERSIZE]}")
 					# length of string going to be received.
+					# New message only receive 10bytes of data (10bytes = HEADER)
 					msglen = int(currentMessage[:HEADERSIZE])
+					lengthToReceive = msglen
 					isNewMessage = False
 
 				fullMessage += currentMessage.decode("utf-8")
 
 				# will be true when whole message is received
 				if len(fullMessage) - HEADERSIZE == msglen:
-					#do work with received message on other thread.
-					thread = threading.Thread(target=thread_processInput, args=(fullMessage[HEADERSIZE:],))
-					thread.start()
-					
+					fullMessage = fullMessage[HEADERSIZE:]
+
+					#do work if authenticated
+					if isAuthenticated:
+						#do work with received message on other thread.
+						thread = threading.Thread(target=thread_processInput, args=(fullMessage,))
+						thread.start()
+
+					# check if password is being set,
+					# if yes then set the password.
+					if len(fullMessage) > 9:
+						if fullMessage[:9] == 'password=':
+							if fullMessage[9:] == password:
+								isAuthenticated = True
+
 					#print("full message received")
 					isNewMessage = True
+					lengthToReceive = 10
 					fullMessage = "" 
 
 	except (KeyboardInterrupt, SystemExit):
