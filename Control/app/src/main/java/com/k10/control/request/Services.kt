@@ -16,6 +16,9 @@ object Services {
     const val VALUE = "value"
     const val KEY_LIST = "key_list"
 
+    const val TYPE_SPECIAL = 1
+    const val TYPE_NORMAL = 0
+
     const val SERVICE_KEYBOARD = 1
     const val SERVICE_MOUSE = 2
 
@@ -26,6 +29,7 @@ object Services {
     const val SERVICE_MOUSE_LEFT_CLICK = 0
     const val SERVICE_MOUSE_LEFT_DOUBLE_CLICK = 1
     const val SERVICE_MOUSE_RIGHT_CLICK = 2
+    const val SERVICE_MOUSE_MOVE_POINTER_BY = 3
 //    const val SERVICE_MOUSE_MOVE_TO = 2
 //    const val SERVICE_MOUSE_MOVE_BY = 2
 

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#FFFFFF</color>
+
+    <color name="bottomNavBackground">#000000</color>
+    <color name="bottomNavSelected">#454749</color>
+
+    <color name="backgroundColor">#3e3e3e</color>
+
+    <color name="panelBackground">#000000</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="textColor">#FFFFFF</color>
 </resources>

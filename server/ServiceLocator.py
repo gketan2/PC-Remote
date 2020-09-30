@@ -85,6 +85,14 @@ class ServiceLocator:
 				print("+++Right Click")
 				return True
 			elif subService == 3:
+				if "value" in jsonData:
+					value = jsonData["value"]
+					if "x" in value:
+						if "y" in value:
+							self.mouse.movePointerBy(value["x"], value["y"])
+							print("+++Move Pointer By")
+							return True
+
 				return False
 			elif subService == 4:
 				return False

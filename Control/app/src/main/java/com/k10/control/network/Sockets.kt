@@ -27,6 +27,7 @@ class Sockets @Inject constructor() {
         ipAddress: String = DEFAULT_IP,
         port: Int = DEFAULT_PORT
     ) {
+        currentState.postValue(SocketStatus(false, "Connecting..."))
         try {
             if (isInitial) {
                 socket = null
@@ -42,6 +43,7 @@ class Sockets @Inject constructor() {
             socket = Socket(ipAddress, port)
             isInitial = false
             currentState.postValue(SocketStatus(true, "Connected"))
+            println("connected")
         } catch (e: UnknownHostException) {
             isInitial = true
             currentState.postValue(SocketStatus(false, "Server not found"))
@@ -88,6 +90,7 @@ class Sockets @Inject constructor() {
             //adding Header to the data
             val message = Headers.addHeader(data)
             try {
+                println("Sending Data:$data")
                 writerStream?.write(message.toByteArray(charset = Charsets.UTF_8))
             } catch (e: Exception) {
                 currentState.postValue(SocketStatus(false, e.localizedMessage!!))

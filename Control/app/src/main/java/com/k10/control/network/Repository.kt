@@ -1,9 +1,8 @@
 package com.k10.control.network
 
-import androidx.lifecycle.MediatorLiveData
-import com.k10.control.helper.Headers
 import com.k10.control.request.Request
 import com.k10.control.request.Services
+import com.k10.control.utils.KeyTypeValuePair
 import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +15,7 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
      * Also make function that accepts custom commands
      */
 
-    val socketStatus: MediatorLiveData<SocketStatus> = MediatorLiveData()
+    //val socketStatus: MediatorLiveData<SocketStatus> = MediatorLiveData()
 
     fun getSocketStatusLiveData() = sockets.currentState
 
@@ -58,7 +57,7 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
     /**
      * Should be the first to call.
      *
-     * No other command will run if the correct password is not set.
+     * No other command will make effect on server if the correct password is not set.
      *
      * If called after the auth done, with wrong password, no command will run until you set correct password again.
      */
@@ -66,9 +65,58 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
 
         val data = "password=$password"
 
-
-
         sockets.sendStringData(data)
+    }
+
+    /**
+     * Send command to server to perform a left click.
+     */
+    suspend fun leftClick() {
+        val jsonObject: JSONObject = request.generateRequestJSON(
+            Services.SERVICE_MOUSE,
+            Services.SERVICE_MOUSE_LEFT_CLICK
+        )
+        sockets.sendStringData(jsonObject.toString())
+    }
+
+    /**
+     * Send command to server to perform a left double click.
+     */
+    suspend fun doubleClick() {
+        val jsonObject: JSONObject = request.generateRequestJSON(
+            Services.SERVICE_MOUSE,
+            Services.SERVICE_MOUSE_LEFT_DOUBLE_CLICK
+        )
+        sockets.sendStringData(jsonObject.toString())
+    }
+
+    /**
+     * Send command to server to perform a right click.
+     */
+    suspend fun rightClick() {
+        val jsonObject: JSONObject = request.generateRequestJSON(
+            Services.SERVICE_MOUSE,
+            Services.SERVICE_MOUSE_RIGHT_CLICK
+        )
+        sockets.sendStringData(jsonObject.toString())
+    }
+
+    /**
+     * input:
+     *
+     * x: Float, x direction
+     *
+     * y: Float, y direction
+     *
+     * send distance to move, to the server.
+     */
+    suspend fun movePointerBy(x: Float, y: Float) {
+        val jsonObject: JSONObject = request.generateRequestJSON(
+            Services.SERVICE_MOUSE,
+            Services.SERVICE_MOUSE_MOVE_POINTER_BY,
+            arrayOf(x, y)
+        )
+        sockets.sendStringData(jsonObject.toString())
     }
 
     /**
@@ -80,7 +128,29 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
      * is not in focus string will not be typed.
      * */
     suspend fun typeString(data: String) {
-        val jsonObject: JSONObject = request.generateRequestJSON(Services.SERVICE_KEYBOARD, Services.SERVICE_KEYBOARD_TYPE, data)
+        val jsonObject: JSONObject = request.generateRequestJSON(
+            Services.SERVICE_KEYBOARD,
+            Services.SERVICE_KEYBOARD_TYPE,
+            data
+        )
+        sockets.sendStringData(jsonObject.toString())
+    }
+
+    suspend fun sendSpecialKeys(data: ArrayList<KeyTypeValuePair>){
+        val jsonObject: JSONObject = request.generateRequestJSON(
+            Services.SERVICE_KEYBOARD,
+            Services.SERVICE_KEYBOARD_PRESS_KEYS,
+            data
+        )
+        sockets.sendStringData(jsonObject.toString())
+    }
+
+    suspend fun sendHotKeys(data: ArrayList<KeyTypeValuePair>){
+        val jsonObject: JSONObject = request.generateRequestJSON(
+            Services.SERVICE_KEYBOARD,
+            Services.SERVICE_KEYBOARD_PRESS_HOT_KEYS,
+            data
+        )
         sockets.sendStringData(jsonObject.toString())
     }
 

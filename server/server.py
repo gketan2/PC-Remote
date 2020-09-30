@@ -17,14 +17,14 @@ serviceLocator = ServiceLocator.getInstance()
 # receives data WITHOUT-HEADER
 # send this data to servoce locator
 def thread_processInput(data):
-	print(f"stripped received data:{data}")
+	#print(f"stripped received data:{data}")
 	serviceLocator.execute(data)
 
 
 # main function to start server
 if __name__ == "__main__":
 
-	host = "127.0.0.1"
+	host = "192.168.43.143"
 	port = 5000
 
 	# Creating socket variable
@@ -38,6 +38,7 @@ if __name__ == "__main__":
 	s.listen(0)
 
 	isAuthenticated = False
+	connectedSockets = []
 
 	try:
 
@@ -45,6 +46,7 @@ if __name__ == "__main__":
 			#listening for connection
 			clientsocket, address = s.accept()
 			print(f"connection from {address}")
+			connectedSockets.append(clientsocket)
 
 			fullMessage = ""
 			isNewMessage = True
@@ -56,6 +58,7 @@ if __name__ == "__main__":
 				if len(currentMessage) == 0:
 					isAuthenticated = False
 					print(f'closed from {address}')
+					connectedSockets.pop()
 					break
 
 				if isNewMessage:
@@ -74,15 +77,17 @@ if __name__ == "__main__":
 					#do work if authenticated
 					if isAuthenticated:
 						#do work with received message on other thread.
-						thread = threading.Thread(target=thread_processInput, args=(fullMessage,))
-						thread.start()
+						#thread = threading.Thread(target=thread_processInput, args=(fullMessage,))
+						#thread.start()
+						serviceLocator.execute(fullMessage)
 
 					# check if password is being set,
 					# if yes then set the password.
-					if len(fullMessage) > 9:
-						if fullMessage[:9] == 'password=':
-							if fullMessage[9:] == password:
-								isAuthenticated = True
+					if not isAuthenticated:
+						if len(fullMessage) > 9:
+							if fullMessage[:9] == 'password=':
+								if fullMessage[9:] == password:
+									isAuthenticated = True
 
 					#print("full message received")
 					isNewMessage = True
@@ -90,4 +95,6 @@ if __name__ == "__main__":
 					fullMessage = "" 
 
 	except (KeyboardInterrupt, SystemExit):
+		for connected in connectedSockets:
+			connected.close()
 		s.close()

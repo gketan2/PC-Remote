@@ -13,6 +13,7 @@ class PointerController:
 	height = 0
 
 	def __init__(self):
+		gui.FAILSAFE = False
 		wh = gui.size()
 		self.height = wh.height # 0 based height
 		self.width = wh.width   # 0 based width
@@ -38,13 +39,13 @@ class PointerController:
 			y = 1
 		elif y >= self.height -1:
 			y = self.height - 2
-		gui.moveTo(x, y, duration=0.2)
+		gui.moveTo(x, y, duration=0.001)
 
 	# -ve x = move left
 	# -ve y = move up
 	# Should be ratio-handeled length
 	def movePointerBy(self, x, y):
-		gui.move(x, y, duration=0.2)
+		gui.move(x, y, duration=0.001)
 
 	def performClick(self):
 		p = gui.position()

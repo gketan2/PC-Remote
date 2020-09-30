@@ -51,15 +51,22 @@ dependencies {
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02"
     kapt "androidx.hilt:hilt-compiler:1.0.0-alpha02"
 
+    //Navigation
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
+
     implementation "androidx.fragment:fragment-ktx:1.2.5"
 
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
-    //ViewPager2
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
-
-    //ViewPager Tabs
+    //material
     implementation 'com.google.android.material:material:1.2.1'
+
+    //Bottom Nav
+    implementation 'com.github.ibrahimsn98:SmoothBottomBar:1.7.6'
+
+    //Text Field
+    implementation 'com.github.HITGIF:TextFieldBoxes:1.4.5'
 }
 
 kapt{

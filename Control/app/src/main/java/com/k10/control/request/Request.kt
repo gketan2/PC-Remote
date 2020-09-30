@@ -13,13 +13,14 @@ class Request @Inject constructor() {
      * Construct a JSON object of the service, sub_service,
      * value according to the type of service and sub_service.
      */
-    fun generateRequestJSON(service: Int, subServiceType: Int, value: Any): JSONObject {
+    fun generateRequestJSON(service: Int, subServiceType: Int, value: Any = ""): JSONObject {
         val requestData = JSONObject()
         requestData.put(Services.SERVICE, service)
         requestData.put(Services.SUB_SERVICE, subServiceType)
 
         if (service == Services.SERVICE_KEYBOARD) {
             when (subServiceType) {
+                //Type Some String
                 Services.SERVICE_KEYBOARD_TYPE -> {
                     if (value is String) {
                         requestData.put(Services.VALUE, value)
@@ -27,6 +28,7 @@ class Request @Inject constructor() {
                         throw IllegalArgumentException("Expected a String")
                     }
                 }
+                //Press Keys one by one
                 Services.SERVICE_KEYBOARD_PRESS_KEYS -> {
                     if (value is ArrayList<*>) {
                         val pairArray = generateKeyTypeValueJSONArray(value)
@@ -36,7 +38,15 @@ class Request @Inject constructor() {
                         throw IllegalArgumentException("Expected ArrayList<KeyType>")
                     }
                 }
+                //press Hot key combination
                 Services.SERVICE_KEYBOARD_PRESS_HOT_KEYS -> {
+                    if (value is ArrayList<*>) {
+                        val pairArray = generateKeyTypeValueJSONArray(value)
+                        //Add the list of keys in return JSON-Object
+                        requestData.put(Services.KEY_LIST, pairArray)
+                    } else {
+                        throw IllegalArgumentException("Expected ArrayList<KeyType>")
+                    }
                 }
             }
 
@@ -48,10 +58,17 @@ class Request @Inject constructor() {
                 }
                 Services.SERVICE_MOUSE_RIGHT_CLICK -> {
                 }
+                Services.SERVICE_MOUSE_MOVE_POINTER_BY -> {
+                    if(value is Array<*>){
+                        val displacement = generateDisplacementJSONObject(value)
+                        requestData.put(Services.VALUE, displacement)
+                    }else{
+                        throw java.lang.IllegalArgumentException("Excepted Array of size 2")
+                    }
+                }
             }
         }
 
-//        println(requestData.toString())
         return requestData
     }
 
@@ -72,5 +89,20 @@ class Request @Inject constructor() {
             }
         }
         return keyStrokes
+    }
+
+    private fun generateDisplacementJSONObject(value: Array<*>): JSONObject{
+        val displacement = JSONObject()
+        if(value[0] is Float){
+            displacement.put("x", value[0] as Float)
+        }else{
+            throw IllegalArgumentException("Expected Array of Float value")
+        }
+        if(value[1] is Float){
+            displacement.put("y", value[1] as Float)
+        }else{
+            throw IllegalArgumentException("Expected Array of Float")
+        }
+        return displacement
     }
 }
