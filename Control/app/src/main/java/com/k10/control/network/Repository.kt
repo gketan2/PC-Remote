@@ -15,8 +15,6 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
      * Also make function that accepts custom commands
      */
 
-    //val socketStatus: MediatorLiveData<SocketStatus> = MediatorLiveData()
-
     fun getSocketStatusLiveData() = sockets.currentState
 
     /**
@@ -115,6 +113,15 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
             Services.SERVICE_MOUSE,
             Services.SERVICE_MOUSE_MOVE_POINTER_BY,
             arrayOf(x, y)
+        )
+        sockets.sendStringData(jsonObject.toString())
+    }
+
+    suspend fun scrollBy(y: Float){
+        val jsonObject: JSONObject = request.generateRequestJSON(
+            Services.SERVICE_MOUSE,
+            Services.SERVICE_MOUSE_SCROLL_BY,
+            y
         )
         sockets.sendStringData(jsonObject.toString())
     }

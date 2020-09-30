@@ -63,7 +63,14 @@ class Request @Inject constructor() {
                         val displacement = generateDisplacementJSONObject(value)
                         requestData.put(Services.VALUE, displacement)
                     }else{
-                        throw java.lang.IllegalArgumentException("Excepted Array of size 2")
+                        throw IllegalArgumentException("Excepted Array of size 2")
+                    }
+                }
+                Services.SERVICE_MOUSE_SCROLL_BY -> {
+                    if (value is Float){
+                        requestData.put(Services.VALUE, value)
+                    }else{
+                        throw IllegalArgumentException("Expected  Float value to scroll")
                     }
                 }
             }

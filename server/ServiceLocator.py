@@ -95,6 +95,9 @@ class ServiceLocator:
 
 				return False
 			elif subService == 4:
+				if "value" in jsonData:
+					self.mouse.performScroll(jsonData["value"])
+					print("+++Scroll")
 				return False
 			elif subService == 5:
 				return False

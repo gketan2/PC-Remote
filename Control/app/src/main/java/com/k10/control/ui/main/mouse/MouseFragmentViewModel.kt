@@ -34,6 +34,11 @@ class MouseFragmentViewModel
         CoroutineScope(IO).launch {
             repository.movePointerBy(x, y)
         }
-        println("move pointer by: x=$x, $y")
+    }
+
+    fun scrollBy(y: Float){
+        CoroutineScope(IO).launch {
+            repository.scrollBy(y/50)
+        }
     }
 }

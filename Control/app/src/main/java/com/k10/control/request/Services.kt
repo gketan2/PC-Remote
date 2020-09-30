@@ -7,8 +7,6 @@ package com.k10.control.request
  * If data required with each command is not satisfied then also command will not run.
  */
 object Services {
-    const val COMMAND_PASSWORD: Int = 0
-
     const val SERVICE = "service"
     const val SUB_SERVICE = "sub_service"
 
@@ -30,8 +28,7 @@ object Services {
     const val SERVICE_MOUSE_LEFT_DOUBLE_CLICK = 1
     const val SERVICE_MOUSE_RIGHT_CLICK = 2
     const val SERVICE_MOUSE_MOVE_POINTER_BY = 3
-//    const val SERVICE_MOUSE_MOVE_TO = 2
-//    const val SERVICE_MOUSE_MOVE_BY = 2
+    const val SERVICE_MOUSE_SCROLL_BY = 4
 
 
 

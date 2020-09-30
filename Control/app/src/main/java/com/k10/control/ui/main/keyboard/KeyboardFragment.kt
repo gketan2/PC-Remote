@@ -62,7 +62,6 @@ class KeyboardFragment : Fragment(R.layout.fragment_keyboard) {
                     //press special key
                     viewModel.addInSpecialArray(Services.TYPE_SPECIAL, SpecialKeyCodes.backspace)
                     viewModel.sendSpecialKeys()
-                    println("-----------backspace")
                 }
             }
         }
