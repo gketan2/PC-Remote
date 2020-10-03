@@ -32,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/logo"
             app:panelBackgroundColor="@color/panelBackground"
-            app:primaryColor="#FFFFFF"
+            app:primaryColor="@color/white"
 
             app:secondaryColor="@color/white">
 
@@ -44,7 +44,7 @@
                 android:maxLength="15"
                 android:minWidth="150dp"
                 android:text="192.168.43.143"
-                android:textColor="@color/textColor"
+                android:textColor="@color/white"
                 android:textSize="24sp" />
         </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>
 
@@ -53,12 +53,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            app:helperTextColor="@color/white"
             app:labelText="PORT"
             app:layout_constraintEnd_toEndOf="parent"
-
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ipAddressWrapper"
             app:panelBackgroundColor="@color/panelBackground"
+            app:primaryColor="@color/white"
 
             app:secondaryColor="@color/white">
 
@@ -70,7 +71,7 @@
                 android:maxLength="4"
                 android:minWidth="150dp"
                 android:text="5000"
-                android:textColor="@color/textColor"
+                android:textColor="@color/white"
                 android:textSize="24sp" />
         </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>
 
@@ -87,5 +88,14 @@
             app:layout_constraintTop_toBottomOf="@id/portWrapper"
             app:rippleColor="#454749" />
 
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/connect" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

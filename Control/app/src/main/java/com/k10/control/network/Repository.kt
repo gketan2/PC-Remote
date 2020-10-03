@@ -1,5 +1,6 @@
 package com.k10.control.network
 
+import androidx.lifecycle.MediatorLiveData
 import com.k10.control.request.Request
 import com.k10.control.request.Services
 import com.k10.control.utils.KeyTypeValuePair
@@ -16,6 +17,8 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
      */
 
     fun getSocketStatusLiveData() = sockets.currentState
+
+    val passwordSet: MediatorLiveData<String> = MediatorLiveData()
 
     /**
      * Send current position(x, y) to the server.
@@ -37,11 +40,12 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
     }
 
     /**
-     * Close the persistent http / socket (not decided yet) by which we contact the server.
+     * Close the socket by which we contact the server.
      *
      * Call it when application is closing otherwise the connection will be open forever
      */
     suspend fun closeConnection() {
+        passwordSet.postValue("")
         sockets.closeSocket()
     }
 
@@ -61,6 +65,7 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
      */
     suspend fun sendPassword(password: String) {
 
+        passwordSet.postValue(password)
         val data = "password=$password"
 
         sockets.sendStringData(data)
@@ -117,7 +122,7 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
         sockets.sendStringData(jsonObject.toString())
     }
 
-    suspend fun scrollBy(y: Float){
+    suspend fun scrollBy(y: Float) {
         val jsonObject: JSONObject = request.generateRequestJSON(
             Services.SERVICE_MOUSE,
             Services.SERVICE_MOUSE_SCROLL_BY,
@@ -143,7 +148,7 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
         sockets.sendStringData(jsonObject.toString())
     }
 
-    suspend fun sendSpecialKeys(data: ArrayList<KeyTypeValuePair>){
+    suspend fun sendSpecialKeys(data: ArrayList<KeyTypeValuePair>) {
         val jsonObject: JSONObject = request.generateRequestJSON(
             Services.SERVICE_KEYBOARD,
             Services.SERVICE_KEYBOARD_PRESS_KEYS,
@@ -152,7 +157,7 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
         sockets.sendStringData(jsonObject.toString())
     }
 
-    suspend fun sendHotKeys(data: ArrayList<KeyTypeValuePair>){
+    suspend fun sendHotKeys(data: ArrayList<KeyTypeValuePair>) {
         val jsonObject: JSONObject = request.generateRequestJSON(
             Services.SERVICE_KEYBOARD,
             Services.SERVICE_KEYBOARD_PRESS_HOT_KEYS,

@@ -86,5 +86,4 @@ class PointerController:
 	# +ve scroll up, window go down
 	# -ve scroll down, window go up
 	def performScroll(self, unit):
-		print(unit)
 		gui.scroll(unit)

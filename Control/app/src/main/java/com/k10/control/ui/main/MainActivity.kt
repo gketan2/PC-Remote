@@ -3,35 +3,28 @@ package com.k10.control.ui.main
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.PopupMenu
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.DialogCompat
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialDialogs
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.k10.control.R
-import com.k10.control.network.Repository
+import com.k10.control.network.wrapper.SocketState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import studio.carbonylgroup.textfieldboxes.ExtendedEditText
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-    @Inject
-    lateinit var repository: Repository
+    private val viewModel: MainActivityViewModel by viewModels()
 
     private lateinit var navController: NavController
 
@@ -51,9 +44,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         disconnect.setOnClickListener(this)
 
         //observing socket status and updating in textview
-        //TODO: IP ADDRESS AND CLOSE (IF DISCONNECTED)
-        repository.getSocketStatusLiveData().observe(this) {
-            connStatus.text = it.message
+        viewModel.socketStatus().observe(this) {
+            connStatus.text = "Socket: ${it.message}"
+            when (it.state) {
+                SocketState.CONNECTED -> {
+                    ipAddPort.text = "${it.ip}:${it.port}"
+                }
+                else -> {
+                    finish()
+                }
+            }
+        }
+
+        //password status
+        viewModel.passwordSet().observe(this) {
+            if (it == null) {
+                passwordStatus.text = "Password Not Set"
+            } else if (it.isEmpty()) {
+                passwordStatus.text = "Password Not Set"
+            } else {
+                passwordStatus.text = "Set Password: '${it}'"
+            }
         }
     }
 
@@ -76,7 +87,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.disconnect -> {
                 CoroutineScope(IO).launch {
-                    repository.closeConnection()
+                    viewModel.closeConnection()
                 }
             }
         }
@@ -97,7 +108,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             val password = passwordField.text.toString()
             if (password.isNotEmpty()) {
                 CoroutineScope(IO).launch {
-                    repository.sendPassword(password)
+                    viewModel.sendPassword(password)
                 }
                 dialog.dismiss()
             } else {
@@ -109,10 +120,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         dialog.window?.setLayout(MATCH_PARENT, WRAP_CONTENT)
     }
 
+    private fun connectionClosedDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Closing Connection!!")
+            .setMessage("By going back, connection will be closed.")
+            .setPositiveButton("OK") { _, _ ->
+                CoroutineScope(IO).launch {
+                    viewModel.closeConnection()
+                }
+                finish()
+            }
+            .setNeutralButton("Cancel") { _, _ ->
+            }
+            .show()
+    }
+
     override fun onBackPressed() {
-        super.onBackPressed()
-        CoroutineScope(IO).launch {
-            repository.closeConnection()
-        }
+        connectionClosedDialog()
     }
 }

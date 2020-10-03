@@ -2,11 +2,12 @@ package com.k10.control.network
 
 import androidx.lifecycle.MediatorLiveData
 import com.k10.control.helper.Headers
+import com.k10.control.network.wrapper.SocketStatus
 import java.io.IOException
 import java.io.OutputStream
 import java.lang.IllegalArgumentException
-import java.net.Socket
-import java.net.UnknownHostException
+import java.net.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 class Sockets @Inject constructor() {
@@ -14,6 +15,7 @@ class Sockets @Inject constructor() {
     companion object {
         private const val DEFAULT_IP = "192.168.43.143"
         private const val DEFAULT_PORT = 5000
+        private const val TIMEOUT_IN_SEC = 2
     }
 
     private var socket: Socket? = null
@@ -23,11 +25,17 @@ class Sockets @Inject constructor() {
 
     val currentState: MediatorLiveData<SocketStatus> = MediatorLiveData()
 
+    private val zeroTo255 = ("(\\d{1,2}|(0|1)\\d{2}|2[0-4]\\d|25[0-5])")
+
+    private val regex: String = "$zeroTo255\\.$zeroTo255\\.$zeroTo255\\.$zeroTo255"
+
+    private var ipPattern: Pattern = Pattern.compile(regex)
+
     suspend fun createSocket(
         ipAddress: String = DEFAULT_IP,
         port: Int = DEFAULT_PORT
     ) {
-        currentState.postValue(SocketStatus(false, "Connecting..."))
+        currentState.postValue(SocketStatus.connecting(ipAddress, port))
         try {
             if (isInitial) {
                 socket = null
@@ -39,26 +47,38 @@ class Sockets @Inject constructor() {
             socket = null
         }
 
+        val matcher = ipPattern.matcher(ipAddress)
+        if (!matcher.matches()) {
+            currentState.postValue(SocketStatus.failed("Wrong IP Address Format!"))
+            return
+        }
+
         try {
-            socket = Socket(ipAddress, port)
+//            socket = Socket(ipAddress, port)
+            val v = InetSocketAddress(ipAddress, port)
+            socket = Socket()
+            socket?.connect(v, TIMEOUT_IN_SEC * 1000)
             isInitial = false
-            currentState.postValue(SocketStatus(true, "Connected"))
-            println("connected")
+            currentState.postValue(SocketStatus.connected(ipAddress, port))
         } catch (e: UnknownHostException) {
             isInitial = true
-            currentState.postValue(SocketStatus(false, "Server not found"))
+            currentState.postValue(SocketStatus.failed("Server not found!"))
+            return
+        } catch (e: SocketTimeoutException) {
+            isInitial = true
+            currentState.postValue(SocketStatus.failed("$TIMEOUT_IN_SEC sec Time Out!"))
             return
         } catch (e: IOException) {
             isInitial = true
-            currentState.postValue(SocketStatus(false, "Something Went Wrong"))
+            currentState.postValue(SocketStatus.failed("Something Went Wrong."))
             return
         } catch (e: SecurityException) {
             isInitial = true
-            currentState.postValue(SocketStatus(false, "Network not secure"))
+            currentState.postValue(SocketStatus.failed("Network not secure."))
             return
         } catch (e: IllegalArgumentException) {
             isInitial = true
-            currentState.postValue(SocketStatus(false, "Illegal Argument"))
+            currentState.postValue(SocketStatus.failed("Illegal Argument(developer error)."))
             return
         }
 
@@ -76,7 +96,7 @@ class Sockets @Inject constructor() {
         }
         socket = null
         isInitial = true
-        currentState.postValue(SocketStatus(false, "Socket Disconnected"))
+        currentState.postValue(SocketStatus.disconnected())
     }
 
     /**
@@ -86,14 +106,12 @@ class Sockets @Inject constructor() {
      */
     suspend fun sendStringData(data: String) {
         socket?.let {
-            println("-------not null socket")
             //adding Header to the data
             val message = Headers.addHeader(data)
             try {
-                println("Sending Data:$data")
                 writerStream?.write(message.toByteArray(charset = Charsets.UTF_8))
             } catch (e: Exception) {
-                currentState.postValue(SocketStatus(false, e.localizedMessage!!))
+                currentState.postValue(SocketStatus.failed(e.localizedMessage!!))
                 closeSocket()
             }
         }
@@ -108,6 +126,6 @@ class Sockets @Inject constructor() {
         writerStream = null
         socket = null
         isInitial = true
-        currentState.postValue(SocketStatus(false, "Socket Disconnected"))
+        currentState.postValue(SocketStatus.disconnected())
     }
 }

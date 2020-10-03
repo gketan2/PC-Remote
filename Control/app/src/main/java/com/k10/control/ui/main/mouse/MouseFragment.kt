@@ -36,6 +36,7 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener {
     }
 
     private var scrollY = 0f
+
     @SuppressLint("ClickableViewAccessibility")
     private val scrollListener: View.OnTouchListener = View.OnTouchListener { _, event ->
         when (event?.action) {

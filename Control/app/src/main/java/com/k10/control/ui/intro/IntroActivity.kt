@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.k10.control.R
+import com.k10.control.network.wrapper.SocketState
 import com.k10.control.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_intro.*
@@ -26,10 +29,26 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun subscribeObserver() {
         viewModel.socketStatus().observe(this) {
-            if (it.isConnected) {
-                val i = Intent(this, MainActivity::class.java)
-                startActivity(i)
-            } else {
+            status.text = it.message
+            if (isShowingConnectingDialog) {
+                connectingDialog?.dismiss()
+                isShowingConnectingDialog = false
+                connectingDialog = null
+            }
+            when (it.state) {
+                SocketState.CONNECTED -> {
+                    val i = Intent(this, MainActivity::class.java)
+                    startActivity(i)
+                }
+                SocketState.DISCONNECTED -> {
+                }
+                SocketState.CONNECTING -> {
+                    //SHOW DIALOG
+                    showConnectingDialog(it.ip, it.port)
+                }
+                SocketState.FAILED -> {
+                    //status.setTextColor(0xFF0000)
+                }
             }
         }
     }
@@ -58,12 +77,8 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
         if (iptext.isEmpty()) {
             ipAddress.error = "Please Enter IP address"
         } else {
-            if (iptext.length < 11) {
-                ipAddress.error = "Wrong IP address"
-            } else {
-                isIPOk = true
-                IPAddress = iptext
-            }
+            isIPOk = true
+            IPAddress = iptext
         }
         //check port validation
         if (porttext.isBlank()) {
@@ -83,5 +98,15 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
 
         viewModel.connect(IPAddress, portNumber)
 
+    }
+
+    private var connectingDialog: AlertDialog? = null
+    private var isShowingConnectingDialog = false
+    private fun showConnectingDialog(ip: String, port: Int) {
+        connectingDialog = MaterialAlertDialogBuilder(this)
+            .setTitle("Connecting...")
+            .setMessage("Connecting to $ip:$port")
+            .show()
+        isShowingConnectingDialog = true
     }
 }
