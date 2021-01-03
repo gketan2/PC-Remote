@@ -10,7 +10,7 @@ import java.net.*
 import java.util.regex.Pattern
 import javax.inject.Inject
 
-class Sockets @Inject constructor() {
+class TCPSockets @Inject constructor() : AbstractSocket() {
 
     companion object {
         private const val DEFAULT_IP = "192.168.43.143"
@@ -31,10 +31,7 @@ class Sockets @Inject constructor() {
 
     private var ipPattern: Pattern = Pattern.compile(regex)
 
-    suspend fun createSocket(
-        ipAddress: String = DEFAULT_IP,
-        port: Int = DEFAULT_PORT
-    ) {
+    override suspend fun createSocket(ipAddress: String, port: Int) {
         currentState.postValue(SocketStatus.connecting(ipAddress, port))
         try {
             if (isInitial) {
@@ -104,7 +101,7 @@ class Sockets @Inject constructor() {
      *
      * Add the HEADER to the input string and then send it to the connected socket server.
      */
-    suspend fun sendStringData(data: String) {
+    override suspend fun sendData(data: String) {
         socket?.let {
             //adding Header to the data
             val message = Headers.addHeader(data)
@@ -117,7 +114,7 @@ class Sockets @Inject constructor() {
         }
     }
 
-    suspend fun closeSocket() {
+    override suspend fun closeSocket() {
         try {
             socket?.close()
         } catch (e: Exception) {

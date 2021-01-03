@@ -12,9 +12,9 @@ class IntroActivityViewModel
     private val repository: Repository
 ) : ViewModel() {
 
-    fun connect(ipAddress: String, port: Int){
+    fun connect(ip: String, port: Int){
         CoroutineScope(IO).launch {
-            repository.startConnection(ipAddress, port)
+            repository.startConnection(ip, port)
         }
     }
 

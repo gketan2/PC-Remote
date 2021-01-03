@@ -11,6 +11,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.k10.control.R
 import com.k10.control.request.Services
+import com.k10.control.ui.main.MainActivityViewModel
 import com.k10.control.utils.SpecialKeyCodes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_keyboard.*
@@ -18,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_keyboard.*
 @AndroidEntryPoint
 class KeyboardFragment : Fragment(R.layout.fragment_keyboard) {
 
-    private val viewModel: KeyboardFragmentViewModel by viewModels()
+    private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 

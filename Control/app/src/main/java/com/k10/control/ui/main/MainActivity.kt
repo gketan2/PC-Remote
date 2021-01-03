@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         //observing socket status and updating in textview
         viewModel.socketStatus().observe(this) {
-            connStatus.text = "Socket: ${it.message}"
+            connStatus.text = "Status: ${it.message}"
             when (it.state) {
                 SocketState.CONNECTED -> {
                     ipAddPort.text = "${it.ip}:${it.port}"
@@ -58,12 +58,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         //password status
         viewModel.passwordSet().observe(this) {
-            if (it == null) {
-                passwordStatus.text = "Password Not Set"
-            } else if (it.isEmpty()) {
-                passwordStatus.text = "Password Not Set"
-            } else {
-                passwordStatus.text = "Set Password: '${it}'"
+            when {
+                it == null -> {
+                    passwordStatus.text = "Password Not Set"
+                }
+                it.isEmpty() -> {
+                    passwordStatus.text = "Password Not Set"
+                }
+                else -> {
+                    passwordStatus.text = "Set Password: '${it}'"
+                }
             }
         }
     }
@@ -71,11 +75,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.bottom_nav_menu, menu)
         bottomNavigation.setupWithNavController(menu!!, navController)
-        return true
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        navController.navigateUp()
         return true
     }
 

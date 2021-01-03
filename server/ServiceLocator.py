@@ -70,7 +70,6 @@ class ServiceLocator:
 			return False
 
 		elif service == 2:
-			print("+Mouse service")
 			# mouse related service
 			if subService == 0:
 				self.mouse.performClick()
@@ -85,19 +84,13 @@ class ServiceLocator:
 				print("+++Right Click")
 				return True
 			elif subService == 3:
-				if "value" in jsonData:
-					value = jsonData["value"]
-					if "x" in value:
-						if "y" in value:
-							self.mouse.movePointerBy(value["x"], value["y"])
-							print("+++Move Pointer By")
-							return True
+				self.mouse.movePointerBy(jsonData["value"]["x"], jsonData["value"]["y"])
+				return True
 
 				return False
 			elif subService == 4:
 				if "value" in jsonData:
 					self.mouse.performScroll(jsonData["value"])
-					print("+++Scroll")
 				return False
 			elif subService == 5:
 				return False

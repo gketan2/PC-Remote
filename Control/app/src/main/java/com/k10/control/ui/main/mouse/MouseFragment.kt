@@ -3,16 +3,19 @@ package com.k10.control.ui.main.mouse
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.k10.control.R
+import com.k10.control.ui.main.MainActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_mouse.*
 
 @AndroidEntryPoint
-class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener {
+class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener,
+    SeekBar.OnSeekBarChangeListener {
 
-    private val viewModel: MouseFragmentViewModel by viewModels()
+    private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,6 +25,15 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener {
 
         trackPad.setOnTouchListener(trackListener)
         scrollPad.setOnTouchListener(scrollListener)
+
+        scrollScaleField.text = viewModel.scrollScale.toString()
+        trackScaleField.text = viewModel.trackScale.toString()
+
+        scrollPadSeek.progress = viewModel.scrollScale
+        trackPadSeek.progress = viewModel.trackScale
+
+        trackPadSeek.setOnSeekBarChangeListener(this)
+        scrollPadSeek.setOnSeekBarChangeListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -35,43 +47,65 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener {
         }
     }
 
-    private var scrollY = 0f
-
-    @SuppressLint("ClickableViewAccessibility")
-    private val scrollListener: View.OnTouchListener = View.OnTouchListener { _, event ->
-        when (event?.action) {
-            MotionEvent.ACTION_DOWN -> {
-                scrollY = event.y
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        when (seekBar?.id) {
+            R.id.trackPadSeek -> {
+                viewModel.trackScale = progress
+                trackScaleField.text = progress.toString()
             }
-            MotionEvent.ACTION_MOVE -> {
-            }
-            MotionEvent.ACTION_UP -> {
-                val moveY = event.y - scrollY
-                scrollY = event.y
-                viewModel.scrollBy(moveY)
+            R.id.scrollPadSeek -> {
+                viewModel.scrollScale = progress
+                scrollScaleField.text = progress.toString()
             }
         }
-        true
     }
 
-    private var startX = 0f
-    private var startY = 0f
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+    }
+
+    private var trackSourceX = 0f
+    private var trackSourceY = 0f
+    private var trackMoveX = 0f
+    private var trackMoveY = 0f
 
     @SuppressLint("ClickableViewAccessibility")
     private val trackListener: View.OnTouchListener = View.OnTouchListener { _, event ->
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
-                startX = event.x
-                startY = event.y
+                trackSourceX = event.x
+                trackSourceY = event.y
             }
             MotionEvent.ACTION_MOVE -> {
+                trackMoveX = event.x - trackSourceX
+                trackMoveY = event.y - trackSourceY
+                trackSourceX = event.x
+                trackSourceY = event.y
+                viewModel.pointerMoveBy(trackMoveX, trackMoveY)
             }
             MotionEvent.ACTION_UP -> {
-                val moveY = event.y - startY
-                val moveX = event.x - startX
-                startX = event.x
-                startY = event.y
-                viewModel.pointerMoveBy(moveX, moveY)
+            }
+        }
+        true
+    }
+
+    private var scrollSource = 0f
+    private var scrollMoveBy = 0f
+
+    @SuppressLint("ClickableViewAccessibility")
+    private val scrollListener: View.OnTouchListener = View.OnTouchListener { _, event ->
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                scrollSource = event.y
+            }
+            MotionEvent.ACTION_MOVE -> {
+                scrollMoveBy = event.y - scrollSource
+                scrollSource = event.y
+                viewModel.scrollBy(scrollMoveBy)
+            }
+            MotionEvent.ACTION_UP -> {
             }
         }
         true

@@ -1,8 +1,6 @@
 from ServiceLocator import ServiceLocator
 
 import socket
-import threading
-import time
 
 password = "password"
 HEADERSIZE = 10
@@ -24,7 +22,7 @@ def thread_processInput(data):
 # main function to start server
 if __name__ == "__main__":
 
-	host = "192.168.43.143"
+	host = "192.168.29.143"
 	port = 5000
 
 	# Creating socket variable
@@ -50,7 +48,7 @@ if __name__ == "__main__":
 
 			fullMessage = ""
 			isNewMessage = True
-			lengthToReceive = 10
+			lengthToReceive = 1024
 
 			while True:
 				currentMessage = clientsocket.recv(lengthToReceive)

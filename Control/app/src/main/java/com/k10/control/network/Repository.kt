@@ -1,7 +1,8 @@
 package com.k10.control.network
 
 import androidx.lifecycle.MediatorLiveData
-import com.k10.control.request.Request
+import com.k10.control.request.CRequest
+import com.k10.control.request.PythonRequest
 import com.k10.control.request.Services
 import com.k10.control.utils.KeyTypeValuePair
 import org.json.JSONObject
@@ -9,7 +10,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Repository @Inject constructor(private val sockets: Sockets, private val request: Request) {
+class Repository @Inject constructor(
+    private val sockets: UDPSocket,
+    private val request: CRequest
+) {
 
     /**TODO
      * Make a List of possible commands.
@@ -68,40 +72,44 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
         passwordSet.postValue(password)
         val data = "password=$password"
 
-        sockets.sendStringData(data)
+        sockets.sendData(data)
     }
 
     /**
      * Send command to server to perform a left click.
      */
     suspend fun leftClick() {
-        val jsonObject: JSONObject = request.generateRequestJSON(
-            Services.SERVICE_MOUSE,
-            Services.SERVICE_MOUSE_LEFT_CLICK
-        )
-        sockets.sendStringData(jsonObject.toString())
+//        val jsonObject: JSONObject = request.generateRequestJSON(
+//            Services.SERVICE_MOUSE,
+//            Services.SERVICE_MOUSE_LEFT_CLICK
+//        )
+        val v = request.generateRequest(Services.C_SERVICE_MOUSE, Services.C_MOUSE_LEFT_CLICK)
+//        sockets.sendStringData(jsonObject.toString())
+        sockets.sendData(v)
     }
 
     /**
      * Send command to server to perform a left double click.
      */
     suspend fun doubleClick() {
-        val jsonObject: JSONObject = request.generateRequestJSON(
-            Services.SERVICE_MOUSE,
-            Services.SERVICE_MOUSE_LEFT_DOUBLE_CLICK
-        )
-        sockets.sendStringData(jsonObject.toString())
+//        val jsonObject: JSONObject = request.generateRequestJSON(
+//            Services.SERVICE_MOUSE,
+//            Services.SERVICE_MOUSE_LEFT_DOUBLE_CLICK
+//        )
+//        sockets.sendStringData(jsonObject.toString())
     }
 
     /**
      * Send command to server to perform a right click.
      */
     suspend fun rightClick() {
-        val jsonObject: JSONObject = request.generateRequestJSON(
-            Services.SERVICE_MOUSE,
-            Services.SERVICE_MOUSE_RIGHT_CLICK
-        )
-        sockets.sendStringData(jsonObject.toString())
+//        val jsonObject: JSONObject = request.generateRequestJSON(
+//            Services.SERVICE_MOUSE,
+//            Services.SERVICE_MOUSE_RIGHT_CLICK
+//        )
+        val v = request.generateRequest(Services.C_SERVICE_MOUSE, Services.C_MOUSE_RIGHT_CLICK)
+//        sockets.sendStringData(jsonObject.toString())
+        sockets.sendData(v)
     }
 
     /**
@@ -113,22 +121,24 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
      *
      * send distance to move, to the server.
      */
-    suspend fun movePointerBy(x: Float, y: Float) {
-        val jsonObject: JSONObject = request.generateRequestJSON(
-            Services.SERVICE_MOUSE,
-            Services.SERVICE_MOUSE_MOVE_POINTER_BY,
-            arrayOf(x, y)
-        )
-        sockets.sendStringData(jsonObject.toString())
+    suspend fun movePointerBy(x: Int, y: Int) {
+//        val jsonObject: JSONObject = request.generateRequestJSON(
+//            Services.SERVICE_MOUSE,
+//            Services.SERVICE_MOUSE_MOVE_POINTER_BY,
+//            arrayOf(x, y)
+//        )
+//        sockets.sendStringData(jsonObject.toString())
+        val v = request.generateRequest(Services.C_SERVICE_MOUSE, Services.C_MOUSE_MOVE, x, y)
+        sockets.sendData(v)
     }
 
     suspend fun scrollBy(y: Float) {
-        val jsonObject: JSONObject = request.generateRequestJSON(
-            Services.SERVICE_MOUSE,
-            Services.SERVICE_MOUSE_SCROLL_BY,
-            y
-        )
-        sockets.sendStringData(jsonObject.toString())
+//        val jsonObject: JSONObject = request.generateRequestJSON(
+//            Services.SERVICE_MOUSE,
+//            Services.SERVICE_MOUSE_SCROLL_BY,
+//            y
+//        )
+//        sockets.sendStringData(jsonObject.toString())
     }
 
     /**
@@ -140,30 +150,30 @@ class Repository @Inject constructor(private val sockets: Sockets, private val r
      * is not in focus string will not be typed.
      * */
     suspend fun typeString(data: String) {
-        val jsonObject: JSONObject = request.generateRequestJSON(
-            Services.SERVICE_KEYBOARD,
-            Services.SERVICE_KEYBOARD_TYPE,
-            data
-        )
-        sockets.sendStringData(jsonObject.toString())
+//        val jsonObject: JSONObject = request.generateRequestJSON(
+//            Services.SERVICE_KEYBOARD,
+//            Services.SERVICE_KEYBOARD_TYPE,
+//            data
+//        )
+//        sockets.sendStringData(jsonObject.toString())
     }
 
     suspend fun sendSpecialKeys(data: ArrayList<KeyTypeValuePair>) {
-        val jsonObject: JSONObject = request.generateRequestJSON(
-            Services.SERVICE_KEYBOARD,
-            Services.SERVICE_KEYBOARD_PRESS_KEYS,
-            data
-        )
-        sockets.sendStringData(jsonObject.toString())
+//        val jsonObject: JSONObject = request.generateRequestJSON(
+//            Services.SERVICE_KEYBOARD,
+//            Services.SERVICE_KEYBOARD_PRESS_KEYS,
+//            data
+//        )
+//        sockets.sendStringData(jsonObject.toString())
     }
 
     suspend fun sendHotKeys(data: ArrayList<KeyTypeValuePair>) {
-        val jsonObject: JSONObject = request.generateRequestJSON(
-            Services.SERVICE_KEYBOARD,
-            Services.SERVICE_KEYBOARD_PRESS_HOT_KEYS,
-            data
-        )
-        sockets.sendStringData(jsonObject.toString())
+//        val jsonObject: JSONObject = request.generateRequestJSON(
+//            Services.SERVICE_KEYBOARD,
+//            Services.SERVICE_KEYBOARD_PRESS_HOT_KEYS,
+//            data
+//        )
+//        sockets.sendStringData(jsonObject.toString())
     }
 
     /**

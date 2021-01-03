@@ -30,7 +30,14 @@ object Services {
     const val SERVICE_MOUSE_MOVE_POINTER_BY = 3
     const val SERVICE_MOUSE_SCROLL_BY = 4
 
+    const val C_SERVICE_MOUSE = 1
+    const val C_SERVICE_KEYBOARD = 2
 
+    const val C_MOUSE_MOVE = 11
+    const val C_MOUSE_LEFT_CLICK = 12
+    const val C_MOUSE_RIGHT_CLICK = 13
+    const val C_MOUSE_SCROLL_CLICK = 14
+    const val C_MOUSE_SCROLL = 15
 
     const val PASSWORD = "password"
 }
