@@ -3,9 +3,11 @@ package com.k10.control.ui.main
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.k10.control.network.Repository
+import com.k10.control.request.Services
 import com.k10.control.utils.KeyTypeValuePair
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class MainActivityViewModel
@@ -15,49 +17,68 @@ class MainActivityViewModel
 
     fun socketStatus() = repository.getSocketStatusLiveData()
 
-    fun passwordSet() = repository.passwordSet
-
-    suspend fun closeConnection() {
-        repository.closeConnection()
-    }
-
-    suspend fun sendPassword(password: String) {
-        repository.sendPassword(password)
+    fun closeConnection() {
+        CoroutineScope(IO).launch {
+            repository.closeConnection()
+        }
     }
 
     /**
      * MOUSE FRAGMENT RELATED THINGS
      */
-    var scrollScale: Int = 50
     var trackScale: Int = 1
 
     fun leftClick() {
-        CoroutineScope(Dispatchers.IO).launch {
-            repository.leftClick()
+        CoroutineScope(IO).launch {
+            repository.mouseClick(Services.C_MOUSE_LEFT_CLICK)
         }
     }
 
     fun rightClick() {
-        CoroutineScope(Dispatchers.IO).launch {
-            repository.rightClick()
+        CoroutineScope(IO).launch {
+            repository.mouseClick(Services.C_MOUSE_RIGHT_CLICK)
         }
     }
 
-    fun doubleClick() {
-        CoroutineScope(Dispatchers.IO).launch {
-            repository.doubleClick()
+    fun forward() {
+        CoroutineScope(IO).launch {
+            repository.mouseClick(Services.C_MOUSE_FORWARD)
+        }
+    }
+
+    fun back() {
+        CoroutineScope(IO).launch {
+            repository.mouseClick(Services.C_MOUSE_BACK)
+        }
+    }
+
+    fun scrollUp() {
+        CoroutineScope(IO).launch {
+            repository.scroll(Services.C_MOUSE_SCROLL_UP)
+        }
+    }
+
+    fun scrollDown() {
+        CoroutineScope(IO).launch {
+            repository.scroll(Services.C_MOUSE_SCROLL_DOWN)
+        }
+    }
+
+    fun scrollLeft() {
+        CoroutineScope(IO).launch {
+            repository.scroll(Services.C_MOUSE_SCROLL_LEFT)
+        }
+    }
+
+    fun scrollRight() {
+        CoroutineScope(IO).launch {
+            repository.scroll(Services.C_MOUSE_SCROLL_RIGHT)
         }
     }
 
     fun pointerMoveBy(x: Float, y: Float) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(IO).launch {
             repository.movePointerBy(x.toInt() / trackScale, y.toInt() / trackScale)
-        }
-    }
-
-    fun scrollBy(y: Float) {
-        CoroutineScope(Dispatchers.IO).launch {
-            repository.scrollBy(y / scrollScale)
         }
     }
 
@@ -68,17 +89,17 @@ class MainActivityViewModel
     private val hotKeys: ArrayList<KeyTypeValuePair> = ArrayList()
 
     fun typeString(text: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(IO).launch {
             repository.typeString(text)
         }
     }
 
-    fun addInSpecialArray(type: Int, value: String){
+    fun addInSpecialArray(type: Int, value: String) {
         specialKeys.add(KeyTypeValuePair(type, value))
     }
 
-    fun sendSpecialKeys(){
-        CoroutineScope(Dispatchers.IO).launch {
+    fun sendSpecialKeys() {
+        CoroutineScope(IO).launch {
             val copyList: ArrayList<KeyTypeValuePair> = ArrayList()
             copyList.addAll(specialKeys)
             repository.sendSpecialKeys(specialKeys)
@@ -86,12 +107,12 @@ class MainActivityViewModel
         }
     }
 
-    fun addInHotKeyArray(type: Int, value: String){
+    fun addInHotKeyArray(type: Int, value: String) {
         hotKeys.add(KeyTypeValuePair(type, value))
     }
 
-    fun sendHotKeys(){
-        CoroutineScope(Dispatchers.IO).launch {
+    fun sendHotKeys() {
+        CoroutineScope(IO).launch {
             repository.sendHotKeys(specialKeys)
             specialKeys.clear()
         }

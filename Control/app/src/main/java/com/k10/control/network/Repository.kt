@@ -1,11 +1,8 @@
 package com.k10.control.network
 
-import androidx.lifecycle.MediatorLiveData
 import com.k10.control.request.CRequest
-import com.k10.control.request.PythonRequest
 import com.k10.control.request.Services
 import com.k10.control.utils.KeyTypeValuePair
-import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,34 +19,12 @@ class Repository @Inject constructor(
 
     fun getSocketStatusLiveData() = sockets.currentState
 
-    val passwordSet: MediatorLiveData<String> = MediatorLiveData()
-
-    /**
-     * Send current position(x, y) to the server.
-     *
-     * If aspect-ratio is not set then server moves the pointer to this position only.
-     *
-     * If aspect-ratio is set then server converts the given point according to its screen size.
-     * So it is recommended to set aspect-ratio.
-     */
-    suspend fun sendPointerPosition(x: Int, y: Int) {
-    }
-
-    /**
-     * Send the tracker window size(not the screen size, just the view which is the tracker region).
-     *
-     * This will help in moving the pointer for different screen sizes with same speed.
-     */
-    suspend fun sendScreenSize(screenWidth: Int, screenHeight: Int) {
-    }
-
     /**
      * Close the socket by which we contact the server.
      *
      * Call it when application is closing otherwise the connection will be open forever
      */
     suspend fun closeConnection() {
-        passwordSet.postValue("")
         sockets.closeSocket()
     }
 
@@ -68,48 +43,9 @@ class Repository @Inject constructor(
      * If called after the auth done, with wrong password, no command will run until you set correct password again.
      */
     suspend fun sendPassword(password: String) {
-
-        passwordSet.postValue(password)
         val data = "password=$password"
 
         sockets.sendData(data)
-    }
-
-    /**
-     * Send command to server to perform a left click.
-     */
-    suspend fun leftClick() {
-//        val jsonObject: JSONObject = request.generateRequestJSON(
-//            Services.SERVICE_MOUSE,
-//            Services.SERVICE_MOUSE_LEFT_CLICK
-//        )
-        val v = request.generateRequest(Services.C_SERVICE_MOUSE, Services.C_MOUSE_LEFT_CLICK)
-//        sockets.sendStringData(jsonObject.toString())
-        sockets.sendData(v)
-    }
-
-    /**
-     * Send command to server to perform a left double click.
-     */
-    suspend fun doubleClick() {
-//        val jsonObject: JSONObject = request.generateRequestJSON(
-//            Services.SERVICE_MOUSE,
-//            Services.SERVICE_MOUSE_LEFT_DOUBLE_CLICK
-//        )
-//        sockets.sendStringData(jsonObject.toString())
-    }
-
-    /**
-     * Send command to server to perform a right click.
-     */
-    suspend fun rightClick() {
-//        val jsonObject: JSONObject = request.generateRequestJSON(
-//            Services.SERVICE_MOUSE,
-//            Services.SERVICE_MOUSE_RIGHT_CLICK
-//        )
-        val v = request.generateRequest(Services.C_SERVICE_MOUSE, Services.C_MOUSE_RIGHT_CLICK)
-//        sockets.sendStringData(jsonObject.toString())
-        sockets.sendData(v)
     }
 
     /**
@@ -122,23 +58,24 @@ class Repository @Inject constructor(
      * send distance to move, to the server.
      */
     suspend fun movePointerBy(x: Int, y: Int) {
-//        val jsonObject: JSONObject = request.generateRequestJSON(
-//            Services.SERVICE_MOUSE,
-//            Services.SERVICE_MOUSE_MOVE_POINTER_BY,
-//            arrayOf(x, y)
-//        )
-//        sockets.sendStringData(jsonObject.toString())
         val v = request.generateRequest(Services.C_SERVICE_MOUSE, Services.C_MOUSE_MOVE, x, y)
         sockets.sendData(v)
     }
 
-    suspend fun scrollBy(y: Float) {
-//        val jsonObject: JSONObject = request.generateRequestJSON(
-//            Services.SERVICE_MOUSE,
-//            Services.SERVICE_MOUSE_SCROLL_BY,
-//            y
-//        )
-//        sockets.sendStringData(jsonObject.toString())
+    /**
+     * Send mouse-click event based on service selected in viewmodel
+     */
+    suspend fun mouseClick(mouseClick: Int) {
+        val v = request.generateRequest(Services.C_SERVICE_MOUSE, mouseClick)
+        sockets.sendData(v)
+    }
+
+    /**
+     * Send scroll-event based on service selected in viewmodel.
+     */
+    suspend fun scroll(mouseService: Int) {
+        val v = request.generateRequest(Services.C_SERVICE_MOUSE, mouseService)
+        sockets.sendData(v)
     }
 
     /**

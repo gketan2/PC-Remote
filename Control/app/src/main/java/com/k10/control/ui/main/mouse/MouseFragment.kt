@@ -22,18 +22,24 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener,
 
         rightClick.setOnClickListener(this)
         leftClick.setOnClickListener(this)
+        scrollUp.setOnClickListener(this)
+        scrollDown.setOnClickListener(this)
+        scrollLeft.setOnClickListener(this)
+        scrollRight.setOnClickListener(this)
+        forwardClick.setOnClickListener(this)
+        backClick.setOnClickListener(this)
 
         trackPad.setOnTouchListener(trackListener)
-        scrollPad.setOnTouchListener(scrollListener)
+//        scrollPad.setOnTouchListener(scrollListener)
 
-        scrollScaleField.text = viewModel.scrollScale.toString()
+//        scrollScaleField.text = viewModel.scrollScale.toString()
         trackScaleField.text = viewModel.trackScale.toString()
 
-        scrollPadSeek.progress = viewModel.scrollScale
+//        scrollPadSeek.progress = viewModel.scrollScale
         trackPadSeek.progress = viewModel.trackScale
 
         trackPadSeek.setOnSeekBarChangeListener(this)
-        scrollPadSeek.setOnSeekBarChangeListener(this)
+//        scrollPadSeek.setOnSeekBarChangeListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -44,6 +50,24 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener,
             R.id.rightClick -> {
                 viewModel.rightClick()
             }
+            R.id.scrollUp -> {
+                viewModel.scrollUp()
+            }
+            R.id.scrollDown -> {
+                viewModel.scrollDown()
+            }
+            R.id.scrollLeft -> {
+                viewModel.scrollLeft()
+            }
+            R.id.scrollRight -> {
+                viewModel.scrollRight()
+            }
+            R.id.forwardClick -> {
+                viewModel.forward()
+            }
+            R.id.backClick -> {
+                viewModel.back()
+            }
         }
     }
 
@@ -53,10 +77,10 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener,
                 viewModel.trackScale = progress
                 trackScaleField.text = progress.toString()
             }
-            R.id.scrollPadSeek -> {
-                viewModel.scrollScale = progress
-                scrollScaleField.text = progress.toString()
-            }
+//            R.id.scrollPadSeek -> {
+//                viewModel.scrollScale = progress
+//                scrollScaleField.text = progress.toString()
+//            }
         }
     }
 
@@ -91,23 +115,23 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener,
         true
     }
 
-    private var scrollSource = 0f
-    private var scrollMoveBy = 0f
+//    private var scrollSource = 0f
+//    private var scrollMoveBy = 0f
 
-    @SuppressLint("ClickableViewAccessibility")
-    private val scrollListener: View.OnTouchListener = View.OnTouchListener { _, event ->
-        when (event?.action) {
-            MotionEvent.ACTION_DOWN -> {
-                scrollSource = event.y
-            }
-            MotionEvent.ACTION_MOVE -> {
-                scrollMoveBy = event.y - scrollSource
-                scrollSource = event.y
-                viewModel.scrollBy(scrollMoveBy)
-            }
-            MotionEvent.ACTION_UP -> {
-            }
-        }
-        true
-    }
+//    @SuppressLint("ClickableViewAccessibility")
+//    private val scrollListener: View.OnTouchListener = View.OnTouchListener { _, event ->
+//        when (event?.action) {
+//            MotionEvent.ACTION_DOWN -> {
+//                scrollSource = event.y
+//            }
+//            MotionEvent.ACTION_MOVE -> {
+//                scrollMoveBy = event.y - scrollSource
+//                scrollSource = event.y
+//                viewModel.scrollBy(scrollMoveBy)
+//            }
+//            MotionEvent.ACTION_UP -> {
+//            }
+//        }
+//        true
+//    }
 }

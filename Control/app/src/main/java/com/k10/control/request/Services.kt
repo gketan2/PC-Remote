@@ -37,7 +37,12 @@ object Services {
     const val C_MOUSE_LEFT_CLICK = 12
     const val C_MOUSE_RIGHT_CLICK = 13
     const val C_MOUSE_SCROLL_CLICK = 14
-    const val C_MOUSE_SCROLL = 15
+    const val C_MOUSE_SCROLL_UP = 15
+    const val C_MOUSE_SCROLL_DOWN = 16
+    const val C_MOUSE_SCROLL_LEFT = 17
+    const val C_MOUSE_SCROLL_RIGHT = 18
+    const val C_MOUSE_FORWARD = 19
+    const val C_MOUSE_BACK = 20
 
     const val PASSWORD = "password"
 }

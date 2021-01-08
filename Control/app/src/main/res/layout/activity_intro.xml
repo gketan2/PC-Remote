@@ -71,7 +71,7 @@
                 android:digits="1234567890."
                 android:maxLength="15"
                 android:minWidth="150dp"
-                android:text="192.168.43.143"
+                android:text="192.168.29.143"
                 android:textColor="@color/white"
                 android:textSize="24sp" />
         </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>
@@ -98,7 +98,7 @@
                 android:inputType="number"
                 android:maxLength="4"
                 android:minWidth="150dp"
-                android:text="5000"
+                android:text="8005"
                 android:textColor="@color/white"
                 android:textSize="24sp" />
         </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>

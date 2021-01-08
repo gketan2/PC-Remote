@@ -23,7 +23,12 @@
 #define MOUSE_LEFT_CLICK 12
 #define MOUSE_RIGHT_CLICK 13
 #define MOUSE_SCROLL_CLICK 14
-#define MOUSE_SCROLL 15
+#define MOUSE_SCROLL_UP 15
+#define MOUSE_SCROLL_DOWN 16
+#define MOUSE_SCROLL_LEFT 17
+#define MOUSE_SCROLL_RIGHT 18
+#define MOUSE_FORWARD 19
+#define MOUSE_BACK 20
 
 #define SERVICE_KEYBOARD 2
 #define KEYBOARD_TYPE_CHAR 21 //single key to be pressed
@@ -37,7 +42,6 @@ Display *display;
 
 void keyboard_interrupt(int dummy){
 	int true = 1;
-	printf("Keyboard Interrupt\n");
 	//Close socket when ctrl-c is pressed.
 	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &true, sizeof(int));
 	//exit the program.
@@ -104,8 +108,18 @@ void decode_array (char data[], int length) {
 			click_mouse(3);
 		} else if (sub_service == MOUSE_SCROLL_CLICK) {
 			click_mouse(2);
-		} else if (sub_service == MOUSE_SCROLL) {
-			//perform scroll
+		} else if (sub_service == MOUSE_SCROLL_UP) {
+			click_mouse(4);
+		} else if (sub_service == MOUSE_SCROLL_DOWN) {
+			click_mouse(5);
+		} else if (sub_service == MOUSE_SCROLL_LEFT) {
+			click_mouse(6);
+		} else if (sub_service == MOUSE_SCROLL_RIGHT) {
+			click_mouse(7);
+		} else if (sub_service == MOUSE_FORWARD) {
+			click_mouse(9);
+		} else if (sub_service == MOUSE_BACK) {
+			click_mouse(8);
 		}
 	}
 

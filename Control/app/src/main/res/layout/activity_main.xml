@@ -29,24 +29,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ipAddPort" />
 
-        <TextView
-            android:id="@+id/passwordStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password is not set"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/connStatus" />
-
-        <Button
-            android:id="@+id/setPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/panelBackground"
-            android:text="Password"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/disconnect"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/disconnect"
             android:layout_width="0dp"
