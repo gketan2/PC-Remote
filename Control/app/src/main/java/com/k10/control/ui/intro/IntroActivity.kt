@@ -22,6 +22,14 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
 
+        //handling screen rotation
+        savedInstanceState?.let {
+            if (it.containsKey("ip"))
+                ipAddressField.setText(it.getString("ip"))
+            if (it.containsKey("port"))
+                portField.setText(it.getString("port"))
+        }
+
         connect.setOnClickListener(this)
 
         subscribeObserver()
@@ -53,6 +61,13 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    //handling screen rotation
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("ip", ipAddressField.text.toString())
+        outState.putString("port", portField.text.toString())
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.connect -> {
@@ -62,33 +77,31 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun connectSocket() {
-        var iptext = ipAddress.text.toString()
-        iptext = iptext.trim()
+        var ip = ipAddressField.text.toString()
+        ip = ip.trim()
 
-        var IPAddress = ""
-        var portNumber = 5000
+        var port = 5000
 
-        var porttext = port.text.toString()
+        var porttext = portField.text.toString()
         porttext = porttext.trim()
 
         var isIPOk = false
         var isPortOk = false
         //check ip string
-        if (iptext.isEmpty()) {
-            ipAddress.error = "Please Enter IP address"
+        if (ip.isEmpty()) {
+            ipAddressField.error = "Please Enter IP address"
         } else {
             isIPOk = true
-            IPAddress = iptext
         }
         //check port validation
         if (porttext.isBlank()) {
-            port.error = "Please Enter Port number"
+            portField.error = "Please Enter Port number"
         } else {
             try {
                 isPortOk = true
-                portNumber = porttext.toInt()
+                port = porttext.toInt()
             } catch (e: Exception) {
-                port.error = "Wrong Port Number"
+                portField.error = "Wrong Port Number"
             }
         }
         //return if neither is OK
@@ -96,7 +109,7 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
 
-        viewModel.connect(IPAddress, portNumber)
+        viewModel.connect(ip, port)
 
     }
 

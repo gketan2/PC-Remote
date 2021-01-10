@@ -1,51 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.mouse.MouseFragment">
 
-    <View
-        android:id="@+id/trackPad"
-        android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:layout_margin="8dp"
-        android:background="@drawable/curved_corner"
-        app:layout_constraintEnd_toStartOf="@id/scrollPad"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/scrollPad"
-        android:layout_width="30dp"
-        android:layout_height="250dp"
-        android:layout_margin="8dp"
-        android:background="@drawable/curved_corner"
-        app:layout_constraintBottom_toBottomOf="@id/trackPad"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/trackPad" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/topGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="8dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/leftClick"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:backgroundTint="#000000"
-        android:text="Left Click"
-        app:layout_constraintEnd_toStartOf="@id/rightClick"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/trackPad" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/rightClick"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:backgroundTint="#000000"
-        android:text="Right Click"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/leftClick"
-        app:layout_constraintTop_toBottomOf="@id/trackPad" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/rightGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottomGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="8dp" />
+
+        <TextView
+            android:id="@+id/track_scale_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Trackpad Descaling"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/trackPadSeek"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline" />
+
+        <SeekBar
+            android:id="@+id/trackPadSeek"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:max="5"
+            android:min="1"
+            android:progress="1"
+            app:layout_constraintEnd_toStartOf="@id/trackScaleField"
+            app:layout_constraintStart_toEndOf="@id/track_scale_header"
+            app:layout_constraintTop_toTopOf="@id/topGuideline" />
+
+        <TextView
+            android:id="@+id/trackScaleField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/trackPadSeek"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideline" />
+
+        <View
+            android:id="@+id/trackPad"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/curved_corner"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintTop_toBottomOf="@id/trackPadSeek" />
+
+        <LinearLayout
+            android:id="@+id/primary_button_wrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintTop_toBottomOf="@id/trackPad">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/leftClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#000000"
+                android:text="Left Click"
+                app:layout_constraintEnd_toStartOf="@id/rightClick"
+                app:layout_constraintStart_toStartOf="@id/leftGuideline"
+                app:layout_constraintTop_toBottomOf="@id/trackPadSeek" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/rightClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#000000"
+                android:text="Right Click"
+                app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+                app:layout_constraintStart_toEndOf="@id/leftClick"
+                app:layout_constraintTop_toBottomOf="@id/trackPadSeek" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/scroll_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+            app:layout_constraintTop_toBottomOf="@id/primary_button_wrapper">
+
+            <TextView
+                android:id="@+id/scroll_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scroll"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/scrollDown"
+                app:layout_constraintEnd_toStartOf="@id/scrollRight"
+                app:layout_constraintStart_toEndOf="@id/scrollLeft"
+                app:layout_constraintTop_toBottomOf="@id/scrollUp" />
+
+            <ImageButton
+                android:id="@+id/scrollUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_up"
+                app:layout_constraintBottom_toTopOf="@id/scroll_header"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/scrollDown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/scroll_header" />
+
+            <ImageButton
+                android:id="@+id/scrollLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_left"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/scroll_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/scrollRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/scroll_header"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/forwardClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#000000"
+            android:text="Forward(4th button)"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintTop_toBottomOf="@id/primary_button_wrapper" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/backClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#000000"
+            android:text="Back(5th button)"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintTop_toBottomOf="@id/forwardClick" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
