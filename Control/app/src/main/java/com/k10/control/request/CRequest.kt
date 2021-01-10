@@ -4,8 +4,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CRequest @Inject constructor() : Request() {
-    override fun generateRequest(service: Int, subService: Int): String {
+class CRequest @Inject constructor() {
+    fun generateRequest(service: Int, subService: Int): String {
         val sb = StringBuilder()
         sb.append(service)
         sb.append('m')
@@ -13,7 +13,7 @@ class CRequest @Inject constructor() : Request() {
         return sb.toString()
     }
 
-    override fun generateRequest(service: Int, subService: Int, vararg data: Int): String {
+    fun generateRequest(service: Int, subService: Int, vararg data: Int): String {
         val sb = StringBuilder()
         sb.append(service)
         sb.append('m')

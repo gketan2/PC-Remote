@@ -2,7 +2,6 @@ package com.k10.control.network
 
 import com.k10.control.request.CRequest
 import com.k10.control.request.Services
-import com.k10.control.utils.KeyTypeValuePair
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -58,7 +57,7 @@ class Repository @Inject constructor(
      * send distance to move, to the server.
      */
     suspend fun movePointerBy(x: Int, y: Int) {
-        val v = request.generateRequest(Services.C_SERVICE_MOUSE, Services.C_MOUSE_MOVE, x, y)
+        val v = request.generateRequest(Services.MOUSE_SERVICE, Services.MOUSE_MOVE, x, y)
         sockets.sendData(v)
     }
 
@@ -66,7 +65,7 @@ class Repository @Inject constructor(
      * Send mouse-click event based on service selected in viewmodel
      */
     suspend fun mouseClick(mouseClick: Int) {
-        val v = request.generateRequest(Services.C_SERVICE_MOUSE, mouseClick)
+        val v = request.generateRequest(Services.MOUSE_SERVICE, mouseClick)
         sockets.sendData(v)
     }
 
@@ -74,7 +73,7 @@ class Repository @Inject constructor(
      * Send scroll-event based on service selected in viewmodel.
      */
     suspend fun scroll(mouseService: Int) {
-        val v = request.generateRequest(Services.C_SERVICE_MOUSE, mouseService)
+        val v = request.generateRequest(Services.MOUSE_SERVICE, mouseService)
         sockets.sendData(v)
     }
 
@@ -86,32 +85,32 @@ class Repository @Inject constructor(
      * it just simulate the button press if the view(in PC)
      * is not in focus string will not be typed.
      * */
-    suspend fun typeString(data: String) {
+//    suspend fun typeString(data: String) {
 //        val jsonObject: JSONObject = request.generateRequestJSON(
 //            Services.SERVICE_KEYBOARD,
 //            Services.SERVICE_KEYBOARD_TYPE,
 //            data
 //        )
 //        sockets.sendStringData(jsonObject.toString())
-    }
+//    }
 
-    suspend fun sendSpecialKeys(data: ArrayList<KeyTypeValuePair>) {
+//    suspend fun sendSpecialKeys(data: ArrayList<KeyTypeValuePair>) {
 //        val jsonObject: JSONObject = request.generateRequestJSON(
 //            Services.SERVICE_KEYBOARD,
 //            Services.SERVICE_KEYBOARD_PRESS_KEYS,
 //            data
 //        )
 //        sockets.sendStringData(jsonObject.toString())
-    }
+//}
 
-    suspend fun sendHotKeys(data: ArrayList<KeyTypeValuePair>) {
+//    suspend fun sendHotKeys(data: ArrayList<KeyTypeValuePair>) {
 //        val jsonObject: JSONObject = request.generateRequestJSON(
 //            Services.SERVICE_KEYBOARD,
 //            Services.SERVICE_KEYBOARD_PRESS_HOT_KEYS,
 //            data
 //        )
 //        sockets.sendStringData(jsonObject.toString())
-    }
+//    }
 
     /**
      * If the client sdk is not up to date with server.

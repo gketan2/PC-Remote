@@ -30,16 +30,12 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener,
         backClick.setOnClickListener(this)
 
         trackPad.setOnTouchListener(trackListener)
-//        scrollPad.setOnTouchListener(scrollListener)
 
-//        scrollScaleField.text = viewModel.scrollScale.toString()
         trackScaleField.text = viewModel.trackScale.toString()
 
-//        scrollPadSeek.progress = viewModel.scrollScale
         trackPadSeek.progress = viewModel.trackScale
 
         trackPadSeek.setOnSeekBarChangeListener(this)
-//        scrollPadSeek.setOnSeekBarChangeListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -77,10 +73,6 @@ class MouseFragment : Fragment(R.layout.fragment_mouse), View.OnClickListener,
                 viewModel.trackScale = progress
                 trackScaleField.text = progress.toString()
             }
-//            R.id.scrollPadSeek -> {
-//                viewModel.scrollScale = progress
-//                scrollScaleField.text = progress.toString()
-//            }
         }
     }
 

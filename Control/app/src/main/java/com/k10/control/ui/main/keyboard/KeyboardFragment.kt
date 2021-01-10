@@ -10,9 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.k10.control.R
-import com.k10.control.request.Services
 import com.k10.control.ui.main.MainActivityViewModel
-import com.k10.control.utils.SpecialKeyCodes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_keyboard.*
 
@@ -40,7 +38,7 @@ class KeyboardFragment : Fragment(R.layout.fragment_keyboard) {
             s?.let {
                 if (it.isNotEmpty()) {
                     previousSent.text = "\'$it\'"
-                    viewModel.typeString(it.toString())
+//                    viewModel.typeString(it.toString())
                 }
             }
         }
@@ -61,8 +59,9 @@ class KeyboardFragment : Fragment(R.layout.fragment_keyboard) {
             KeyEvent.ACTION_UP -> {
                 if (keyCode == KeyEvent.KEYCODE_DEL) {
                     //press special key
-                    viewModel.addInSpecialArray(Services.TYPE_SPECIAL, SpecialKeyCodes.backspace)
-                    viewModel.sendSpecialKeys()
+                    //TODO Listen backspace press
+//                    viewModel.addInSpecialArray(Services.TYPE_SPECIAL, SpecialKeyCodes.backspace)
+//                    viewModel.sendSpecialKeys()
                 }
             }
         }
