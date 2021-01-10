@@ -72,7 +72,7 @@
         <View
             android:id="@+id/trackPad"
             android:layout_width="0dp"
-            android:layout_height="250dp"
+            android:layout_height="230dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/curved_corner"
             app:layout_constraintEnd_toEndOf="@id/rightGuideline"

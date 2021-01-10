@@ -14,20 +14,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/ipAddPort"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftGuideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="xxx.xxx.xxx.xxx:xxxx"
-            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <TextView
+            android:id="@+id/ipAddField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="xxx.xxx.xxx.xxx"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/portField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="xxxx"
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintTop_toBottomOf="@id/ipAddField" />
 
         <TextView
             android:id="@+id/connStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ipAddPort" />
+            app:layout_constraintStart_toStartOf="@id/leftGuideline"
+            app:layout_constraintTop_toBottomOf="@id/portField" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/disconnect"

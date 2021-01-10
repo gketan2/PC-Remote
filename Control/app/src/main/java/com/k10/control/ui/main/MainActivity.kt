@@ -39,7 +39,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             connStatus.text = "Status: ${it.message}"
             when (it.state) {
                 SocketState.CONNECTED -> {
-                    ipAddPort.text = "${it.ip}:${it.port}"
+                    ipAddField.text = "IP: ${it.ip}"
+                    portField.text = "PORT: ${it.port}"
                 }
                 else -> {
                     finish()
