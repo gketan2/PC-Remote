@@ -21,4 +21,4 @@ Compilation argument :
   * **winuser.h**
 
 Compilation arguments :
-  * `-lwsock32 -lws1_32`
+  * `-lwsock32 -lws2_32`
