@@ -3,10 +3,11 @@
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_EXTRA_LEAN
 
-//mouse clicks
-#include <winuser.h>
 //cursor motion
 #include <windows.h>
+//mouse clicks
+#include <winuser.h>
+
 //sockets
 #include <winsock2.h>
 #include <Ws2tcpip.h>
