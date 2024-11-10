@@ -12,12 +12,13 @@
 #include <winsock2.h>
 #include <Ws2tcpip.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
-// #pragma comment (lib, "Mswsock.lib")
+//#pragma comment (lib, "Mswsock.lib")
 
-#define DEFAULT_IP "192.168.29.143"
+#define DEFAULT_IP "192.168.1.4"
 #define DEFAULT_PORT 8005
 #define MAXLINE 1024
 
@@ -78,21 +79,47 @@ int get_int(char data[], int *cursor, int length){
 	return result*multiplier;
 }
 
-POINT p;
+INPUT input[1] = {};
 void move_pointer_by (int x, int y) {
-	GetCursorPos(&p);
-	p.x += x;
-	p.y += y;
-	SetCursorPos(p.x, p.y);
+	input[0].mi.dx = x;
+	input[0].mi.dy = y;
+	SendInput(1, input, sizeof(INPUT));
 }
 
-void click_mouse (int button) {
-	//press
-	// XTestFakeButtonEvent(display, button, True, 0);
-	// XFlush(display);
-	// //release
-	// XTestFakeButtonEvent(display, button, False, 0);
-	// XFlush(display);
+void click_mouse_button(DWORD button[]) {
+	INPUT input0[1] = {};
+	input0[0].type = INPUT_MOUSE;
+	input0[0].mi.dx = 0;
+	input0[0].mi.dy = 0;
+	input0[0].mi.mouseData = 0;
+	input0[0].mi.dwFlags = button[0];
+	input0[0].mi.time = 0;
+	input0[0].mi.dwExtraInfo = 0;
+	SendInput(1, input0, sizeof(INPUT));
+
+	Sleep(10);
+
+	INPUT input1[1] = {};
+	input1[0].type = INPUT_MOUSE;
+	input1[0].mi.dx = 0;
+	input1[0].mi.dy = 0;
+	input1[0].mi.mouseData = 0;
+	input1[0].mi.dwFlags = button[1];
+	input1[0].mi.time = 0;
+	input1[0].mi.dwExtraInfo = 0;
+	SendInput(1, input1, sizeof(INPUT));
+}
+
+void scroll_mouse(DWORD sfg, int direction) {
+	INPUT input1[1] = {};
+	input1[0].type = INPUT_MOUSE;
+	input1[0].mi.dx = 0;
+	input1[0].mi.dy = 0;
+	input1[0].mi.mouseData = direction*100;
+	input1[0].mi.dwFlags = sfg;
+	input1[0].mi.time = 0;
+	input1[0].mi.dwExtraInfo = 0;
+	SendInput(1, input1, sizeof(INPUT));
 }
 
 void decode_array (char data[], int length) {
@@ -100,10 +127,8 @@ void decode_array (char data[], int length) {
 	int cursor = 0;
 
 	int service = get_int(data, &cursor, length);
-	// printf("%d", &service);
 
 	int sub_service = get_int(data, &cursor, length);
-	// printf("%d", &sub_service);
 
 	if (service == SERVICE_MOUSE) {
 		if (sub_service == MOUSE_MOVE) {
@@ -112,23 +137,38 @@ void decode_array (char data[], int length) {
 			int y = get_int(data, &cursor, length);
 			move_pointer_by(x, y);
 		} else if (sub_service == MOUSE_LEFT_CLICK) {
-			click_mouse(1);
+			DWORD inputs[2];
+			inputs[0] = MOUSEEVENTF_LEFTDOWN;
+			inputs[1] = MOUSEEVENTF_LEFTUP;
+			click_mouse_button(inputs);
 		} else if (sub_service == MOUSE_RIGHT_CLICK) {
-			click_mouse(3);
+			DWORD inputs[2];
+			inputs[0] = MOUSEEVENTF_RIGHTDOWN;
+			inputs[1] = MOUSEEVENTF_RIGHTUP;
+			click_mouse_button(inputs);
 		} else if (sub_service == MOUSE_SCROLL_CLICK) {
-			click_mouse(2);
+			DWORD inputs[2];
+			inputs[0] = MOUSEEVENTF_MIDDLEDOWN;
+			inputs[1] = MOUSEEVENTF_MIDDLEUP;
+			click_mouse_button(inputs);
 		} else if (sub_service == MOUSE_SCROLL_UP) {
-			click_mouse(4);
+			scroll_mouse(MOUSEEVENTF_WHEEL, 1);
 		} else if (sub_service == MOUSE_SCROLL_DOWN) {
-			click_mouse(5);
+			scroll_mouse(MOUSEEVENTF_WHEEL, -1);
 		} else if (sub_service == MOUSE_SCROLL_LEFT) {
-			click_mouse(6);
+			scroll_mouse(0x1000, -1);
 		} else if (sub_service == MOUSE_SCROLL_RIGHT) {
-			click_mouse(7);
+			scroll_mouse(0x1000, 1);
 		} else if (sub_service == MOUSE_FORWARD) {
-			click_mouse(9);
+			// DWORD inputs[2];
+			// inputs[0] = WM_XBUTTONDOWN;
+			// inputs[1] = WM_XBUTTONUP;
+			// click_mouse_button(inputs);
 		} else if (sub_service == MOUSE_BACK) {
-			click_mouse(8);
+			// DWORD inputs[2];
+			// inputs[0] = MOUSEEVENTF_XDOWN;
+			// inputs[1] = MOUSEEVENTF_XUP;
+			// click_mouse_button(inputs);
 		}
 	}
 
@@ -183,6 +223,15 @@ void server (char *ip, int port) {
 	char buffer[MAXLINE];
 	int len, n;
 	//WHILE LOOP HERE
+
+	////MOUSE MOVEMENT INIT////////////////////
+	input[0].type = INPUT_MOUSE;
+	input[0].mi.mouseData = 0;
+	input[0].mi.dwFlags = MOUSEEVENTF_MOVE;
+	input[0].mi.time = 0;
+	input[0].mi.dwExtraInfo = 0;
+	//////////////////////////////////////////
+
 	while(1){
 		//clear buffer
 		memset(buffer, '\0', MAXLINE);
